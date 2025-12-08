@@ -1,0 +1,20 @@
+---
+# OpenSRP Community Charts (Contains OpenHIM, HAPI FHIR)
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  name: opensrp
+  namespace: flux-system
+spec:
+  interval: 1h
+  url: https://helm.smartregister.org
+---
+# HAPI FHIR (Alternative/Specific chart if needed, but OpenSRP often covers it)
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  name: chgl
+  namespace: flux-system
+spec:
+  interval: 1h
+  url: https://chgl.github.io/charts

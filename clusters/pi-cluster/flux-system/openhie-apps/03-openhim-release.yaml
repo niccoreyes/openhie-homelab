@@ -1,0 +1,26 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: openhim-core
+  namespace: default
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: openhim-core
+      version: "4.0.x" # Check latest version
+      sourceRef:
+        kind: HelmRepository
+        name: opensrp # Assuming OpenSRP community chart is used
+        namespace: flux-system
+  values:
+    mongodb:
+      enabled: true # Deploy a simple MongoDB for OpenHIM storage
+      persistence:
+        size: 5Gi # Requires a Persistent Volume on the Pi (local-path provisioner is default in K3s)
+    service:
+      type: NodePort # Expose the console/API for external access
+      nodePort: 9000
+    # Set initial credentials (CHANGE THESE!)
+    openhim:
+      initialUserPassword: "<YOUR_OPENHIM_PASSWORD>"

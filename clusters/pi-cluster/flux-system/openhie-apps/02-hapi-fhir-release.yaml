@@ -1,0 +1,76 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: hapi-fhir-jpaserver
+  namespace: default
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: hapi-fhir-jpaserver
+      version: "0.5.x"
+      sourceRef:
+        kind: HelmRepository
+        name: chgl
+        namespace: flux-system
+
+  values:
+    replicaCount: 1
+
+    # -------------------------------------------------------------------
+    # 1. OVERRIDE THE HAPI FHIR IMAGE TO ARM64-COMPATIBLE BUILD
+    # -------------------------------------------------------------------
+    image:
+      repository: ghcr.io/chgl/hapi
+      tag: "5.5.1"        # MUST match multi-arch tag
+      pullPolicy: IfNotPresent
+
+    # -------------------------------------------------------------------
+    # 2. RESOURCE LIMITS
+    # -------------------------------------------------------------------
+    resources:
+      limits:
+        cpu: "1000m"
+        memory: "2Gi"
+      requests:
+        cpu: "500m"
+        memory: "1Gi"
+
+    # -------------------------------------------------------------------
+    # 3. POSTGRES CONFIG
+    #    Option A: Use embedded Postgres
+    #    Option B: Use external Postgres (recommended for Pi)
+    # -------------------------------------------------------------------
+
+    postgresql:
+      enabled: true                   # set to false if using external DB
+      architecture: standalone
+      image:
+        registry: docker.io
+        repository: bitnami/postgresql
+        tag: 15.6.0                   # ✔ ARM64 supported
+      auth:
+        username: postgres
+        password: "password"
+        database: fhir
+
+      primary:
+        resources:
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+          requests:
+            cpu: "100m"
+            memory: "256Mi"
+
+      persistence:
+        enabled: true
+        size: 20Gi
+        storageClass: null
+
+    # -------------------------------------------------------------------
+    # 4. SERVICE SETTINGS
+    # -------------------------------------------------------------------
+    service:
+      type: ClusterIP
+      port: 8080
