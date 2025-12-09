@@ -30,12 +30,12 @@ spec:
     # 2. RESOURCE LIMITS
     # -------------------------------------------------------------------
     resources:
-      limits:
-        cpu: "1000m"
-        memory: "2Gi"
       requests:
-        cpu: "500m"
-        memory: "1Gi"
+        cpu: "500m"        # half a core minimum
+        memory: "4Gi"      # minimum memory for JPA server
+      limits:
+        cpu: "2"           # allow up to 2 cores
+        memory: "8Gi"      # cap memory at 8 GB
 
     # -------------------------------------------------------------------
     # 3. HEALTH CHECKS - CRITICAL FIX
@@ -110,6 +110,9 @@ kind: Ingress
 metadata:
   name: hapi-fhir-ingress
   namespace: default
+  # annotations:
+  #   # For Tailscale ingress, you may need these annotations
+  #   tailscale.com/funnel: "true"  # Optional: enables Tailscale Funnel
   labels:
     app.kubernetes.io/name: hapi-fhir-jpaserver
     app.kubernetes.io/component: ingress
@@ -117,7 +120,7 @@ spec:
   ingressClassName: tailscale
   tls:
   - hosts:
-      - cdr
+      - portainer
   rules:
     - host: cdr
       http:
