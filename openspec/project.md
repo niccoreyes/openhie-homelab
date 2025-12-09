@@ -1,7 +1,7 @@
 # Project Context
 
 ## Purpose
-GitOps-based homelab project deploying OpenHIE (Open Health Information Exchange) components on a Raspberry Pi K3s cluster. The project demonstrates healthcare interoperability infrastructure-as-code practices using Flux v2 for automated deployment and management of Kubernetes resources. Designed for educational and development purposes in resource-constrained environments.
+GitOps-based homelab project deploying OpenHIE (Open Health Information Exchange) components on a Raspberry Pi 8gb RAM K3s cluster. The project demonstrates healthcare interoperability infrastructure-as-code practices using Flux v2 for automated deployment and management of Kubernetes resources. Designed for educational and development purposes in resource-constrained environments.
 
 ## Tech Stack
 - **Kubernetes Distribution**: K3s (lightweight Kubernetes for edge/IoT)
@@ -33,10 +33,10 @@ GitOps-based homelab project deploying OpenHIE (Open Health Information Exchange
 - **Helm via Flux**: HelmReleases managed through Flux rather than direct Helm usage
 
 ### Testing Strategy
-[Add testing approach once implemented - currently validation is done through deployments]
+No testing strategy needed for now.
 
 ### Git Workflow
-- **Feature Branch Workflow**: Work in feature branches, merge to main
+- **Feature Branch Workflow**: Work directly on main branch for now. But there are future plans to do proper work in feature branches, then merge to main.
 - **Commit Convention**: `feat(service): description` format using conventional commits
 - **Branch Strategy**: Main branch as primary/production branch
 - **GitOps Synchronization**: Flux reconciles from main branch every 10 minutes
@@ -83,13 +83,16 @@ This project implements the **OpenHIE (Open Health Information Exchange) archite
   - Docker Hub (various images)
   - GHCR (GitHub Container Registry)
   - opensrp/community-charts (OpenHIE community charts)
-  - chgl/charts (HAPI FHIR charts)
+  - chgl/charts (**DEPRECATED** HAPI FHIR charts - migration in progress to official HAPI FHIR charts)
 
 ### Data Sources
 - **Helm Repositories**:
   - `https://opensrp.github.io/community-charts` (OpenHIM, HAPI FHIR, OCL)
-  - `https://chgl.github.io/charts` (Alternative HAPI FHIR)
+  - `https://chgl.github.io/charts` (**DEPRECATED**: HAPI FHIR - Migrate to https://github.com/hapifhir/hapi-fhir-jpaserver-starter/tree/master/charts/hapi-fhir-jpaserver)
   - `https://tailscale.com/helm-charts` (Tailscale operator)
+
+### Deprecation Notice
+⚠ **Important**: The CHGL HAPI FHIR charts are deprecated in favor of the official HAPI FHIR JPAServer charts at https://github.com/hapifhir/hapi-fhir-jpaserver-starter/tree/master/charts/hapi-fhir-jpaserver. Migration to the official charts is recommended.
 
 ### Network Access
 - **Tailscale Network**: Required for remote cluster access and management
