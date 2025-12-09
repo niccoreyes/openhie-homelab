@@ -97,3 +97,7 @@ This project implements the **OpenHIE (Open Health Information Exchange) archite
 ### Network Access
 - **Tailscale Network**: Required for remote cluster access and management
 - **No Public Ingress**: Services exposed locally on the Raspberry Pi (unless Tailscale enabled)
+
+### Server Access
+- **Server Logs**: The server is accessible on pi@raspberrypi if on SSH. Tailscale deals with the rest.
+- **Kubernetes / Flux Commands**: Run the commands through the mentioned endpoint not from local if needed.
