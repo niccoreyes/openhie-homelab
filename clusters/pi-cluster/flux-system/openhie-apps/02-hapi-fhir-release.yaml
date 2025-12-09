@@ -120,7 +120,7 @@ spec:
   ingressClassName: tailscale
   tls:
   - hosts:
-      - portainer
+      - cdr
   rules:
     - host: cdr
       http:
