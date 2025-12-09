@@ -104,9 +104,9 @@ metadata:
     # traefik.ingress.kubernetes.io/router.tls: "true"
 spec:
   ingressClassName: tailscale
-  tls:
-  - hosts:
-      - portainer
+  # tls:
+  # - hosts:
+  #     - portainer
   rules:
   - host: portainer.tail126a09.ts.net
     http:
@@ -117,4 +117,4 @@ spec:
           service:
             name: portainer-service
             port:
-              name: http
+              # name: http
