@@ -17,10 +17,6 @@ spec:
         namespace: flux-system
   values:
     replicaCount: 1
-    # externalDatabase:
-    #   # We tell HAPI: "The password is in this secret, under THIS specific key"
-    #   existingSecret: hapi-fhir-jpaserver-postgresql
-    #   existingSecretPasswordKey: postgres-password
 
     # -------------------------------------------------------------------
     # 1. HAPI FHIR IMAGE CONFIGURATION
@@ -55,6 +51,10 @@ spec:
         username: postgres
         password: "password"
         database: fhir
+        # ✅ override secret key mapping so HAPI pod reads the correct key
+        existingSecret: hapi-fhir-jpaserver-postgresql
+        secretKeys:
+          adminPasswordKey: postgres-password
       primary:
         resources:
           limits:
@@ -99,4 +99,3 @@ spec:
                 name: hapi-fhir-jpaserver
                 port:
                   number: 8080
----
