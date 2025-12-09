@@ -20,7 +20,7 @@ spec:
     externalDatabase:
       # We tell HAPI: "The password is in this secret, under THIS specific key"
       existingSecret: hapi-fhir-jpaserver-postgresql
-      existingSecretPasswordKey: postgresql-password
+      existingSecretPasswordKey: postgres-password
 
     # -------------------------------------------------------------------
     # 1. HAPI FHIR IMAGE CONFIGURATION
