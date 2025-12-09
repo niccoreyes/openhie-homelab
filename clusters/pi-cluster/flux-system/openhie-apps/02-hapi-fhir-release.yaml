@@ -38,7 +38,7 @@ spec:
         memory: "4Gi"      # cap memory at 4 GB
 
     # -------------------------------------------------------------------
-    # 3. HEALTH CHECKS - CRITICAL FIX
+    # 3. HEALTH CHECKS
     # -------------------------------------------------------------------
     startupProbe:
       httpGet:
@@ -104,15 +104,19 @@ spec:
       type: ClusterIP
       port: 8080
 
+    # -------------------------------------------------------------------
+    # 6. ENVIRONMENT VARIABLES (Fix for Swagger UI / Mixed Content)
+    # -------------------------------------------------------------------
+    env:
+      - name: HAPI_FHIR_SERVER_ADDRESS
+        value: "https://cdr.tail126a09.ts.net/fhir"
+
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: hapi-fhir-ingress
   namespace: default
-  # annotations:
-  #   # For Tailscale ingress, you may need these annotations
-  #   tailscale.com/funnel: "true"  # Optional: enables Tailscale Funnel
   labels:
     app.kubernetes.io/name: hapi-fhir-jpaserver
     app.kubernetes.io/component: ingress
