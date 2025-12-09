@@ -1,31 +1,96 @@
 # Project Context
 
 ## Purpose
-[Describe your project's purpose and goals]
+GitOps-based homelab project deploying OpenHIE (Open Health Information Exchange) components on a Raspberry Pi K3s cluster. The project demonstrates healthcare interoperability infrastructure-as-code practices using Flux v2 for automated deployment and management of Kubernetes resources. Designed for educational and development purposes in resource-constrained environments.
 
 ## Tech Stack
-- [List your primary technologies]
-- [e.g., TypeScript, React, Node.js]
+- **Kubernetes Distribution**: K3s (lightweight Kubernetes for edge/IoT)
+- **GitOps Tool**: Flux v2 (manifest generation + reconciliation)
+- **Cluster Management**: Single-node Raspberry Pi cluster (pi-cluster)
+- **Version Control**: Git (GitHub repository as source of truth)
+- **VPN/Access**: Tailscale operator for secure remote access
+- **Container Management**: Portainer for Kubernetes UI and cluster administration
+- **Healthcare API**: HAPI FHIR Server (FHIR R4 standards-based API)
+- **Interoperability Layer**: OpenHIM (message routing and transformation)
+- **Terminology Management**: OCL (Open Concept Lab)
 
 ## Project Conventions
 
 ### Code Style
-[Describe your code style preferences, formatting rules, and naming conventions]
+- Kubernetes manifests in YAML format with consistent indentation
+- Resource naming follows Kubernetes conventions (kebab-case)
+- Flux kustomizations use conventional structure:
+  - `/clusters/pi-cluster/flux-system/apps/` for application deployments
+  - `/clusters/pi-cluster/flux-system/openhie-apps/` for healthcare-specific apps
+- Secret management via Kubernetes native mechanisms (no plaintext secrets)
 
 ### Architecture Patterns
-[Document your architectural decisions and patterns]
+- **GitOps Pattern**: All infrastructure defined in Git, Flux handles reconciliation
+- **Single-Cluster Architecture**: Single-node K3s cluster on Raspberry Pi
+- **ARM64 Compatibility**: All container images tagged for ARM64 architecture
+- **Embedded Databases**: Uses embedded PostgreSQL (HAPI FHIR) and Bitnami MongoDB (OpenHIM)
+- **Local Path Storage**: K3s default local-path provisioner for persistent volumes
+- **Helm via Flux**: HelmReleases managed through Flux rather than direct Helm usage
 
 ### Testing Strategy
-[Explain your testing approach and requirements]
+[Add testing approach once implemented - currently validation is done through deployments]
 
 ### Git Workflow
-[Describe your branching strategy and commit conventions]
+- **Feature Branch Workflow**: Work in feature branches, merge to main
+- **Commit Convention**: `feat(service): description` format using conventional commits
+- **Branch Strategy**: Main branch as primary/production branch
+- **GitOps Synchronization**: Flux reconciles from main branch every 10 minutes
+- **Commit Prefixes**: `feat` (new features), `fix` (bug fixes), `chore` (maintenance)
 
 ## Domain Context
-[Add domain-specific knowledge that AI assistants need to understand]
+
+### Healthcare Interoperability Focus
+This project implements the **OpenHIE (Open Health Information Exchange) architecture**, a reference implementation for healthcare data exchange in resource-constrained settings. Key domain concepts:
+
+- **FHIR (Fast Healthcare Interoperability Resources)**: Modern standard for healthcare data exchange
+- **HAPI FHIR**: Java-based FHIR server implementing FHIR R4 specification
+- **OpenHIM**: Middleware component for routing/transforming healthcare messages
+- **OCL**: Medical terminology and concept dictionary management
+- **Interoperability Layer**: Manages communication between disparate health systems
+
+### Edge Deployment Characteristics
+- Designed for **Raspberry Pi K3s clusters** (ARM64 architecture)
+- **Lightweight** deployment suitable for low-resource environments
+- **Offline-capable** deployment for regions with limited connectivity
+- **Development and educational** use case for health informatics training
 
 ## Important Constraints
-[List any technical, business, or regulatory constraints]
+
+### Technical Constraints
+- **ARM64 Architecture**: All container images must be ARM64-compatible
+- **Resource Constraints**: Suitable for Raspberry Pi hardware (limited CPU/memory)
+- **Single-Node Cluster**: No high availability or multi-node distribution
+- **Local Storage Only**: Uses K3s local-path provisioner (no external storage)
+- **Network Constraints**: Tailscale VPN for secure remote access (no public ingress by default)
+
+### Deployment Constraints
+- **GitOps-Only**: All changes must go through Git repository, no manual kubectl operations
+- **Flux Managed**: Applications deployed exclusively through Flux kustomizations
+- **No Environment Branches**: Single main branch deployment (no dev/staging/prod differentiation)
+- **Embedded Databases**: No external database services (all data in-cluster)
 
 ## External Dependencies
-[Document key external services, APIs, or systems]
+
+### External Services
+- **GitHub**: Repository hosting at `git@github.com:niccoreyes/openhie-homelab`
+- **Tailscale**: VPN service for secure cluster access (authentication required)
+- **Container Registries**:
+  - Docker Hub (various images)
+  - GHCR (GitHub Container Registry)
+  - opensrp/community-charts (OpenHIE community charts)
+  - chgl/charts (HAPI FHIR charts)
+
+### Data Sources
+- **Helm Repositories**:
+  - `https://opensrp.github.io/community-charts` (OpenHIM, HAPI FHIR, OCL)
+  - `https://chgl.github.io/charts` (Alternative HAPI FHIR)
+  - `https://tailscale.com/helm-charts` (Tailscale operator)
+
+### Network Access
+- **Tailscale Network**: Required for remote cluster access and management
+- **No Public Ingress**: Services exposed locally on the Raspberry Pi (unless Tailscale enabled)
