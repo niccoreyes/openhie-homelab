@@ -49,12 +49,8 @@ spec:
         tag: "latest"
       auth:
         username: postgres
-        password: "password"
+        password: "password"  # Bitnami chart will generate secret automatically
         database: fhir
-        # ✅ override secret key mapping so HAPI pod reads the correct key
-        existingSecret: hapi-fhir-jpaserver-postgresql
-        secretKeys:
-          adminPasswordKey: postgres-password
       primary:
         resources:
           limits:
