@@ -1,0 +1,119 @@
+# clusters/my-k3s-cluster/apps/portainer/portainer.yaml
+
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: portainer
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: portainer-sa-clusteradmin
+  namespace: portainer
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: portainer-crb-clusteradmin
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin # This grants Portainer full admin access to the cluster
+subjects:
+- kind: ServiceAccount
+  name: portainer-sa-clusteradmin
+  namespace: portainer
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: portainer
+  namespace: portainer
+  labels:
+    app: portainer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: portainer # <-- Added Deployment selector
+  template:
+    metadata:
+      labels:
+        app: portainer
+    spec:
+      serviceAccount: portainer-sa-clusteradmin
+      containers:
+      - name: portainer
+        image: portainer/portainer-ce:latest # Community Edition image
+        ports:
+        - containerPort: 9000
+          name: http-port
+        - containerPort: 8000
+          name: edge-port
+        volumeMounts:
+          - name: data
+            mountPath: /data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: portainer-data # <-- PVC is required for persistence
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: portainer-data
+  namespace: portainer
+spec:
+  accessModes:
+    - ReadWriteOnce # Standard access mode
+  resources:
+    requests:
+      storage: 1Gi # Request 1 Gigabyte of storage for Portainer data
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: portainer-service
+  namespace: portainer
+spec:
+  # Using ClusterIP as Ingress will handle external exposure
+  type: ClusterIP
+  selector:
+    app: portainer
+  ports:
+    - name: http
+      protocol: TCP
+      port: 9000
+      targetPort: 9000
+    # nodePort: 30777 # <-- Removed NodePort since we are using Ingress
+      
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: portainer-ingress
+  namespace: portainer
+  annotations:
+    # Use Traefik (default k3s Ingress controller) to expose the service
+    kubernetes.io/ingress.class: traefik
+    # Optional: Enable automatic TLS/SSL using Let's Encrypt (requires configuring Traefik with Cert-Manager)
+    # traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    # traefik.ingress.kubernetes.io/router.tls: "true"
+spec:
+  rules:
+  - host: raspberrypi.tail126a09.ts.net # <-- Your specified FQDN
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: portainer-service
+            port:
+              number: 9000
