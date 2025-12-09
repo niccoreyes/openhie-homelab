@@ -17,10 +17,10 @@ spec:
         namespace: flux-system
   values:
     replicaCount: 1
-    externalDatabase:
-      # We tell HAPI: "The password is in this secret, under THIS specific key"
-      existingSecret: hapi-fhir-jpaserver-postgresql
-      existingSecretPasswordKey: postgres-password
+    # externalDatabase:
+    #   # We tell HAPI: "The password is in this secret, under THIS specific key"
+    #   existingSecret: hapi-fhir-jpaserver-postgresql
+    #   existingSecretPasswordKey: postgres-password
 
     # -------------------------------------------------------------------
     # 1. HAPI FHIR IMAGE CONFIGURATION
