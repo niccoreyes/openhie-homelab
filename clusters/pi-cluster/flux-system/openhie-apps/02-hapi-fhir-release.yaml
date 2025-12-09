@@ -32,10 +32,10 @@ spec:
     resources:
       requests:
         cpu: "500m"        # half a core minimum
-        memory: "4Gi"      # minimum memory for JPA server
+        memory: "2Gi"      # minimum memory for JPA server
       limits:
         cpu: "2"           # allow up to 2 cores
-        memory: "8Gi"      # cap memory at 8 GB
+        memory: "4Gi"      # cap memory at 4 GB
 
     # -------------------------------------------------------------------
     # 3. HEALTH CHECKS - CRITICAL FIX
