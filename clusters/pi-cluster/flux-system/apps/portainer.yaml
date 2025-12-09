@@ -5,14 +5,12 @@ apiVersion: v1
 kind: Namespace
 metadata:
   name: portainer
-
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: portainer-sa-clusteradmin
   namespace: portainer
-
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -26,7 +24,6 @@ subjects:
 - kind: ServiceAccount
   name: portainer-sa-clusteradmin
   namespace: portainer
-
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -39,13 +36,13 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: portainer # <-- Added Deployment selector
+      app: portainer
   template:
     metadata:
       labels:
         app: portainer
     spec:
-      serviceAccount: portainer-sa-clusteradmin
+      serviceAccountName: portainer-sa-clusteradmin # (Note: correct field is serviceAccountName)
       containers:
       - name: portainer
         image: portainer/portainer-ce:latest # Community Edition image
@@ -101,13 +98,17 @@ metadata:
   namespace: portainer
   annotations:
     # Use Traefik (default k3s Ingress controller) to expose the service
-    kubernetes.io/ingress.class: traefik
+    # kubernetes.io/ingress.class: traefik
     # Optional: Enable automatic TLS/SSL using Let's Encrypt (requires configuring Traefik with Cert-Manager)
     # traefik.ingress.kubernetes.io/router.entrypoints: websecure
     # traefik.ingress.kubernetes.io/router.tls: "true"
 spec:
+  ingressClassName: tailscale
+  tls:
+  - hosts:
+      - portainer
   rules:
-  - host: raspberrypi.tail126a09.ts.net # <-- Your specified FQDN
+  - host: portainer.tail126a09.ts.net
     http:
       paths:
       - path: /
