@@ -38,7 +38,40 @@ spec:
         memory: "1Gi"
 
     # -------------------------------------------------------------------
-    # 3. POSTGRES CONFIG
+    # 3. HEALTH CHECKS - CRITICAL FIX
+    # -------------------------------------------------------------------
+    startupProbe:
+      httpGet:
+        path: /fhir/metadata
+        port: 8080
+      initialDelaySeconds: 60
+      periodSeconds: 10
+      timeoutSeconds: 5
+      successThreshold: 1
+      failureThreshold: 30  # Allow up to 5 minutes for startup (30 * 10s)
+
+    readinessProbe:
+      httpGet:
+        path: /fhir/metadata
+        port: 8080
+      initialDelaySeconds: 30
+      periodSeconds: 10
+      timeoutSeconds: 5
+      successThreshold: 1
+      failureThreshold: 3
+
+    livenessProbe:
+      httpGet:
+        path: /fhir/metadata
+        port: 8080
+      initialDelaySeconds: 120
+      periodSeconds: 30
+      timeoutSeconds: 5
+      successThreshold: 1
+      failureThreshold: 3
+
+    # -------------------------------------------------------------------
+    # 4. POSTGRES CONFIG
     # -------------------------------------------------------------------
     postgresql:
       enabled: true
@@ -49,7 +82,7 @@ spec:
         tag: "latest"
       auth:
         username: postgres
-        password: "password"  # Bitnami chart will generate secret automatically
+        password: "password"
         database: fhir
       primary:
         resources:
@@ -65,11 +98,12 @@ spec:
         storageClass: null
 
     # -------------------------------------------------------------------
-    # 4. SERVICE SETTINGS
+    # 5. SERVICE SETTINGS
     # -------------------------------------------------------------------
     service:
       type: ClusterIP
       port: 8080
+
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
