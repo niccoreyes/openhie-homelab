@@ -96,7 +96,8 @@ kind: Ingress
 metadata:
   name: portainer-ingress
   namespace: portainer
-  annotations:
+  # annotations:
+  #   tailscale.com/hostname: portainer
     # Use Traefik (default k3s Ingress controller) to expose the service
     # kubernetes.io/ingress.class: traefik
     # Optional: Enable automatic TLS/SSL using Let's Encrypt (requires configuring Traefik with Cert-Manager)
@@ -104,17 +105,17 @@ metadata:
     # traefik.ingress.kubernetes.io/router.tls: "true"
 spec:
   ingressClassName: tailscale
-  # tls:
-  # - hosts:
-  #     - portainer
+  tls:
+  - hosts:
+      - portainer
   rules:
-  - host: portainer.tail126a09.ts.net
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: portainer-service
-            port:
-              name: http
+    - host: portainer  # sometimes docs omit host — but some minimal hostname may be accepted
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: portainer-service
+                port:
+                  number: 9000
