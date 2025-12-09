@@ -44,11 +44,11 @@ spec:
       httpGet:
         path: /fhir/metadata
         port: 8080
-      initialDelaySeconds: 60
-      periodSeconds: 10
-      timeoutSeconds: 5
+      initialDelaySeconds: 120   # wait 2 minutes before first probe
+      periodSeconds: 20          # probe every 20s
+      timeoutSeconds: 10
       successThreshold: 1
-      failureThreshold: 30  # Allow up to 5 minutes for startup (30 * 10s)
+      failureThreshold: 30       # allows ~10 minutes for startup
 
     readinessProbe:
       httpGet:
