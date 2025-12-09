@@ -117,4 +117,4 @@ spec:
           service:
             name: portainer-service
             port:
-              number: 9000
+              name: http
