@@ -1,0 +1,11 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: hapi-fhir-starter
+  namespace: flux-system
+spec:
+  interval: 10m
+  url: https://github.com/hapifhir/hapi-fhir-jpaserver-starter
+  ref:
+    branch: master

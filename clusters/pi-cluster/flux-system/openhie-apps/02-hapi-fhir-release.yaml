@@ -9,14 +9,12 @@ spec:
   interval: 5m
   chart:
     spec:
-      chart: hapi-fhir-jpaserver
-      # FIX 1: Updated version to match the Chart.yaml (was 0.5.x)
+      chart: charts/hapi-fhir-jpaserver
       version: "0.21.0"
       sourceRef:
-        kind: HelmRepository
-        name: chgl
+        kind: GitRepository
+        name: hapi-fhir-starter
         namespace: flux-system
-
   values:
     replicaCount: 1
 
@@ -24,10 +22,7 @@ spec:
     # 1. HAPI FHIR IMAGE CONFIGURATION
     # -------------------------------------------------------------------
     image:
-      # FIX 2: Updated to official HAPI project repo
       repository: hapiproject/hapi
-      # FIX 3: Using specific version 'v8.6.0-1' (matches 'latest' but is safer)
-      # This tag explicitly supports ARM64 (Raspberry Pi)
       tag: "v8.6.0-1"
       pullPolicy: IfNotPresent
 
@@ -51,7 +46,6 @@ spec:
       image:
         registry: docker.io
         repository: bitnami/postgresql
-        # FIX 4: Using 'latest' to ensure ARM64 support (missing in 15.6.0)
         tag: "latest"
       auth:
         username: postgres
