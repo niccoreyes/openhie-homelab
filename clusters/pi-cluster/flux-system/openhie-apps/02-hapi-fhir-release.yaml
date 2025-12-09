@@ -10,7 +10,8 @@ spec:
   chart:
     spec:
       chart: hapi-fhir-jpaserver
-      version: "0.5.x"
+      # FIX 1: Updated version to match the Chart.yaml (was 0.5.x)
+      version: "0.21.0"
       sourceRef:
         kind: HelmRepository
         name: chgl
@@ -20,11 +21,14 @@ spec:
     replicaCount: 1
 
     # -------------------------------------------------------------------
-    # 1. OVERRIDE THE HAPI FHIR IMAGE TO ARM64-COMPATIBLE BUILD
+    # 1. HAPI FHIR IMAGE CONFIGURATION
     # -------------------------------------------------------------------
     image:
-      repository: ghcr.io/chgl/hapi
-      tag: "5.5.1"        # MUST match multi-arch tag
+      # FIX 2: Updated to official HAPI project repo
+      repository: hapiproject/hapi
+      # FIX 3: Using specific version 'v8.6.0-1' (matches 'latest' but is safer)
+      # This tag explicitly supports ARM64 (Raspberry Pi)
+      tag: "v8.6.0-1"
       pullPolicy: IfNotPresent
 
     # -------------------------------------------------------------------
@@ -40,22 +44,19 @@ spec:
 
     # -------------------------------------------------------------------
     # 3. POSTGRES CONFIG
-    #    Option A: Use embedded Postgres
-    #    Option B: Use external Postgres (recommended for Pi)
     # -------------------------------------------------------------------
-
     postgresql:
-      enabled: true                   # set to false if using external DB
+      enabled: true
       architecture: standalone
       image:
         registry: docker.io
         repository: bitnami/postgresql
-        tag: latest                   # ✔ ARM64 supported
+        # FIX 4: Using 'latest' to ensure ARM64 support (missing in 15.6.0)
+        tag: "latest"
       auth:
         username: postgres
         password: "password"
         database: fhir
-
       primary:
         resources:
           limits:
@@ -64,7 +65,6 @@ spec:
           requests:
             cpu: "100m"
             memory: "256Mi"
-
       persistence:
         enabled: true
         size: 20Gi
@@ -76,24 +76,6 @@ spec:
     service:
       type: ClusterIP
       port: 8080
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: hapi-fhir-jpaserver
-  namespace: default
-  labels:
-    app.kubernetes.io/name: hapi-fhir-jpaserver
-    app.kubernetes.io/component: server
-spec:
-  type: ClusterIP
-  ports:
-    - port: 8080
-      targetPort: 8080
-      protocol: TCP
-      name: http
-  selector:
-    app.kubernetes.io/name: hapi-fhir-jpaserver
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
