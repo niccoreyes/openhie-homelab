@@ -301,12 +301,29 @@ flux logs --all-namespaces
 flux reconcile kustomization flux-system
 ```
 
-#### 2. Tailscale Access Issues
+#### 2. Kustomize Build Failures
+This occurs when kustomization.yaml files are malformed, empty, or reference non-existent paths:
+```bash
+# Check for empty or malformed kustomization.yaml files
+find . -name "kustomization.yaml" -exec ls -la {} \;
+
+# Validate kustomization.yaml files have proper resource references
+# Example of correct format:
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - resource1.yaml
+  - resource2.yaml
+```
+
+If a directory has an empty kustomization.yaml file, either populate it with resources or remove the file entirely.
+
+#### 3. Tailscale Access Issues
 - Verify Tailscale operator is running: `kubectl get pods -n tailscale`
 - Check OAuth secret is configured correctly
 - Ensure your device is connected to Tailscale network
 
-#### 3. Resource Constraints on Raspberry Pi
+#### 4. Resource Constraints on Raspberry Pi
 ```bash
 # Check resource usage
 kubectl top nodes
@@ -315,7 +332,7 @@ kubectl top pods --all-namespaces
 # Adjust resource limits in manifests if needed
 ```
 
-#### 4. HAPI FHIR Not Starting
+#### 5. HAPI FHIR Not Starting
 - Check PostgreSQL pod is running
 - Verify persistent volume claims
 - Review HAPI FHIR logs: `kubectl logs deployment/hapi-fhir-jpaserver`
