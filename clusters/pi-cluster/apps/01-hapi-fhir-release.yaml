@@ -91,8 +91,7 @@ spec:
         fhir:
           openapi_enabled: true
           fhir_version: R4
-          use_apache_address_strategy: true
-          use_apache_address_strategy_https: true
+          server_address: "https://cdr.tail126a09.ts.net/fhir"
           local_base_urls:
             - https://cdr.tail126a09.ts.net/fhir
 
