@@ -32,7 +32,7 @@ spec:
       persistence:
         enabled: true
         size: 5Gi
-        storageClass: null  # Uses default storage class (local-path on K3s)
+        storageClass: ""  # Uses default storage class (local-path on K3s)
         mountPath: "/home/node/.n8n"
 
       # Environment variables
@@ -46,7 +46,6 @@ spec:
     service:
       type: ClusterIP
       port: 5678
-      annotations: {}
 
     # Ingress configuration
     ingress:
