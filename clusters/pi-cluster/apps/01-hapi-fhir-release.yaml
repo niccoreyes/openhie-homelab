@@ -92,8 +92,14 @@ spec:
           openapi_enabled: true
           fhir_version: R4
           server_address: "https://cdr.tail126a09.ts.net/fhir"
-          local_base_urls:
-            - https://cdr.tail126a09.ts.net/fhir
+      tester:
+        -
+          id: home
+          name: Local Tester
+          server_address: 'https://cdr.tail126a09.ts.net/fhir'
+          refuse_to_fetch_third_party_urls: false
+          fhir_version: R4
+
 
 
     # env:
@@ -109,8 +115,6 @@ metadata:
   labels:
     app.kubernetes.io/name: hapi-fhir-jpaserver
     app.kubernetes.io/component: ingress
-  annotations:
-      tailscale.com/forward-headers: "true"
 spec:
   ingressClassName: tailscale
   tls:
