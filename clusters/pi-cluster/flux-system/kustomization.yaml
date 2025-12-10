@@ -4,7 +4,6 @@ resources:
   - gotk-components.yaml
   - gotk-sync.yaml
   - ../infrastructure
-  - ../config/cluster-config-placeholder.yaml
   - ../apps
   - ../jobs
   - ../repositories

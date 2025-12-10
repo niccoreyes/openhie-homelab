@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: cluster-config-placeholder
-  namespace: default
-data:
-  placeholder: "true"
