@@ -20,7 +20,7 @@ spec:
       count: 1
       image:
         repository: n8nio/n8n
-        tag: "1.49.0"  # Using a recent stable version
+        tag: "stable"  # Using a recent stable version
         pullPolicy: IfNotPresent
 
       # Service configuration
