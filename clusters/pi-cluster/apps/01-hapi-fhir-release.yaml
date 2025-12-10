@@ -86,6 +86,40 @@ spec:
     # -------------------------------------------------------------------
     # 5. ENVIRONMENT VARIABLES (Fixed)
     # -------------------------------------------------------------------
+    extraConfig: |
+      spring:
+        ai:
+          mcp:
+            server:
+              name: FHIR MCP Server
+              version: 1.0.0
+              instructions: "This server provides access to a FHIR RESTful API. You can use it to query FHIR resources, perform operations, and retrieve data in a structured format."
+              enabled: true
+              streamable-http:
+                mcp-endpoint: /mcp/messages
+      hapi:
+        fhir:
+          openapi_enabled: true
+          fhir_version: R4
+          server_address: "https://cdr.tail126a09.ts.net/fhir"
+          allow_cascading_deletes: true
+          allow_contains_searches: true
+          allow_external_references: true
+          allow_multiple_delete: true
+          expunge_enabled: true
+        cr:
+          enabled: true
+          cql:
+            use_embedded_libraries: true
+        cdshooks:
+          enabled: true
+          clientIdHeaderName: client_id
+        subscription:
+          resthook_enabled: true
+          websocket_enabled: true
+          polling_interval_ms: 5000
+          immediately_queued: false
+
     env:
       - name: HAPI_FHIR_SERVER_ADDRESS
         value: "https://cdr.tail126a09.ts.net/fhir"
