@@ -72,7 +72,7 @@ spec:
             memory: "256Mi"
       persistence:
         enabled: true
-        size: 20Gi
+        size: 5Gi
         storageClass: null
 
     # -------------------------------------------------------------------
@@ -94,8 +94,8 @@ spec:
           server_address: "https://cdr.tail126a09.ts.net/fhir"
           tester:
             -
-              id: home
-              name: Local Tester
+              id: tailscale
+              name: FHIR Tail
               server_address: 'https://cdr.tail126a09.ts.net/fhir'
               refuse_to_fetch_third_party_urls: false
               fhir_version: R4

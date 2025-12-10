@@ -4,3 +4,4 @@ resources:
   - 01-hapi-fhir-release.yaml
   # - 02-openhim-release.yaml
   # - 03-ocl-release.yaml
+  - 04-n8n-release.yaml
