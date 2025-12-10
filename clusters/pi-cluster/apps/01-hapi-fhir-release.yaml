@@ -100,6 +100,39 @@ spec:
               refuse_to_fetch_third_party_urls: false
               fhir_version: R4
 
+    # Init container to copy custom assets
+    initContainers:
+      - name: asset-copier
+        image: busybox:1.35
+        command: ['sh', '-c']
+        args:
+          - |
+            mkdir -p /tmp/custom-assets
+            if [ -f /assets/sample-logo.jpg ]; then
+              cp /assets/sample-logo.jpg /tmp/custom-assets/sample-logo.jpg
+              echo "Custom logo copied"
+            else
+              echo "Custom logo not found, using default"
+              # You could download a default custom logo here if needed
+            fi
+        volumeMounts:
+          - name: custom-assets
+            mountPath: /tmp/custom-assets
+          - name: shared-assets
+            mountPath: /assets
+    # Volume mounts for custom assets
+    volumes:
+      - name: custom-assets
+        emptyDir: {}
+      - name: shared-assets
+        hostPath:
+          path: /config/hapi-fhir/custom-assets/img
+          type: DirectoryOrCreate
+    volumeMounts:
+      - name: custom-assets
+        mountPath: /app/app/img/sample-logo.jpg
+        subPath: sample-logo.jpg
+
 
 
     # env:

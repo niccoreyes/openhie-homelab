@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hapi-fhir-custom-assets
+  namespace: default
+data:
+  # Note: For binary files like images, you'll need to use a different approach
+  # such as a persistent volume, hostPath volume, or initContainer to copy files
+  # This ConfigMap can hold configuration values that reference the logo
+  custom-logo-path: "/app/custom-assets/img/sample-logo.jpg"
+  # You can add other configuration parameters here as needed
