@@ -163,15 +163,12 @@ Replace `tailXXXXX.ts.net` with your Tailscale MagicDNS domain.
 openhie-homelab/
 ├── clusters/                    # Kubernetes cluster configurations
 │   └── pi-cluster/             # Raspberry Pi cluster
-│       └── flux-system/        # Flux CD configuration
-│           ├── apps/           # Infrastructure apps
-│           │   ├── portainer.yaml
-│           │   └── tailscale-operator.yaml
-│           └── openhie-apps/   # Healthcare applications
-│               ├── 01-helm-repositories.yaml
-│               ├── 02-hapi-fhir-release.yaml
-│               ├── 03-openhim-release.yaml
-│               └── 04-ocl-release.yaml
+│       ├── flux-system/        # Flux CD controllers and configuration
+│       ├── infrastructure/     # Infrastructure components (Portainer, Tailscale, etc.)
+│       ├── apps/               # Application deployments (HAPI FHIR, OpenHIM, OCL)
+│       ├── config/             # Cluster configuration and secrets
+│       ├── jobs/               # Job definitions and CronJobs
+│       └── repositories/       # Git/Helm repository definitions
 ├── openspec/                   # Spec-driven development
 │   ├── project.md             # Project conventions and context
 │   ├── specs/                 # Current specifications
@@ -216,6 +213,23 @@ openhie-homelab/
 
 This project uses **OpenSpec** for spec-driven development:
 
+### FluxCD Repository Structure
+The project follows FluxCD best practices with a clear separation of concerns:
+
+- **infrastructure/**: Core infrastructure components like Portainer and Tailscale operator
+- **apps/**: OpenHIE applications (HAPI FHIR, OpenHIM, OCL)
+- **config/**: Cluster configurations and secrets
+- **jobs/**: Batch jobs and CronJobs for data processing tasks
+- **repositories/**: Git and Helm repository definitions
+- **flux-system/**: Flux controllers and sync configuration
+
+### Running Jobs with Flux
+The jobs directory supports running batch jobs and CronJobs as part of your GitOps workflow. Create job definitions in the `clusters/pi-cluster/jobs/` directory to implement recurring or one-time tasks such as:
+- Healthcare data backups
+- Data validation and cleanup
+- Report generation
+- Data migration tasks
+
 ### Making Changes
 1. **Explore Current State**:
    ```bash
@@ -236,7 +250,7 @@ This project uses **OpenSpec** for spec-driven development:
    ```
 
 4. **Implement Approved Changes**:
-   - Update Kubernetes manifests in `clusters/`
+   - Update Kubernetes manifests in appropriate directories (`infrastructure/`, `apps/`, `jobs/`, etc.)
    - Let Flux automatically deploy changes
    - Test via Tailscale access
 

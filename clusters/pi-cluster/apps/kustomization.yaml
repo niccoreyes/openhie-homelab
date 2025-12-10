@@ -1,6 +1,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - hapi-fhir-release.yaml
-  # - 03-openhim-release.yaml
-  # - 04-ocl-release.yaml
+  - 01-hapi-fhir-release.yaml
+  # - 02-openhim-release.yaml
+  # - 03-ocl-release.yaml
