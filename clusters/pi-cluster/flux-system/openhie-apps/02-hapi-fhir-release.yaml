@@ -23,7 +23,8 @@ spec:
     # -------------------------------------------------------------------
     image:
       repository: hapiproject/hapi
-      tag: "v8.4.0-2"
+      # use this specific version. As of v8.4.0-3 to v8.6.0-1 there are issues with Test Web UI setup (hapi-fhir-testpage-overlay)
+      tag: "v8.4.0-2" 
       pullPolicy: IfNotPresent
 
     # -------------------------------------------------------------------
