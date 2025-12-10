@@ -15,43 +15,38 @@ spec:
         name: community-charts
         namespace: flux-system
   values:
-    # Deployment configuration
-    n8n:
-      replicaCount: 1
-
+    # Main container configuration
+    main:
+      count: 1
       image:
         repository: n8nio/n8n
         tag: "1.49.0"  # Using a recent stable version
         pullPolicy: IfNotPresent
 
-      # Resource limits (adjusted for Raspberry Pi)
-      # resources:
-      #   limits:
-      #     cpu: "1000m"
-      #     memory: "2Gi"
-      #   requests:
-      #     cpu: "500m"
-      #     memory: "1Gi"
-
-      # Service configuration - adjusted to match chart schema
+      # Service configuration
       service:
-        type: ClusterIP
+        name: http
         port: 5678
-        # Removed targetPort as it's not allowed in this version
-        annotations: {}
 
       # Persistence for n8n data
       persistence:
         enabled: true
         size: 5Gi
         storageClass: null  # Uses default storage class (local-path on K3s)
+        mountPath: "/home/node/.n8n"
 
       # Environment variables
-      # Using extraEnvs instead of env to match the chart schema
-      config:
+      extraEnvVars:
         N8N_BASIC_AUTH_ACTIVE: "false"
         N8N_METRICS: "true"
         N8N_LOG_LEVEL: "info"
+        N8N_HIRING_BANNER_ENABLED: "false"
+
+    # Service configuration at root level
+    service:
+      type: ClusterIP
+      port: 5678
+      annotations: {}
 
     # Ingress configuration
     ingress:
@@ -67,8 +62,9 @@ spec:
       tls: []
 
     # Database configuration (using SQLite by default, can be changed to PostgreSQL if needed)
-    postgresql:
-      enabled: false  # Disabled to use SQLite for simplicity in this deployment
+    db:
+      type: sqlite
+
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
