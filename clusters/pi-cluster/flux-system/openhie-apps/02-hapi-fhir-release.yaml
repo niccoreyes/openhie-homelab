@@ -29,49 +29,26 @@ spec:
     # -------------------------------------------------------------------
     # 2. RESOURCE LIMITS
     # -------------------------------------------------------------------
-    resources:
-      requests:
-        cpu: "500m"        # half a core minimum
-        memory: "2Gi"      # minimum memory for JPA server
-      limits:
-        cpu: "2"           # allow up to 2 cores
-        memory: "4Gi"      # cap memory at 4 GB
+    # resources:
+    #   requests:
+    #     cpu: "500m"        # half a core minimum
+    #     memory: "2Gi"      # minimum memory for JPA server
+    #   limits:
+    #     cpu: "2"           # allow up to 2 cores
+    #     memory: "4Gi"      # cap memory at 4 GB
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
 
     # -------------------------------------------------------------------
-    # 3. HEALTH CHECKS
-    # -------------------------------------------------------------------
-    # startupProbe:
-    #   httpGet:
-    #     path: /fhir/metadata
-    #     port: 8080
-    #   initialDelaySeconds: 120   # wait 2 minutes before first probe
-    #   periodSeconds: 20          # probe every 20s
-    #   timeoutSeconds: 10
-    #   successThreshold: 1
-    #   failureThreshold: 30       # allows ~10 minutes for startup
-
-    # readinessProbe:
-    #   httpGet:
-    #     path: /fhir/metadata
-    #     port: 8080
-    #   initialDelaySeconds: 30
-    #   periodSeconds: 10
-    #   timeoutSeconds: 5
-    #   successThreshold: 1
-    #   failureThreshold: 3
-
-    # livenessProbe:
-    #   httpGet:
-    #     path: /fhir/metadata
-    #     port: 8080
-    #   initialDelaySeconds: 120
-    #   periodSeconds: 30
-    #   timeoutSeconds: 5
-    #   successThreshold: 1
-    #   failureThreshold: 3
-
-    # -------------------------------------------------------------------
-    # 4. POSTGRES CONFIG
+    # 3. POSTGRES CONFIG
     # -------------------------------------------------------------------
     postgresql:
       enabled: true
@@ -98,28 +75,29 @@ spec:
         storageClass: null
 
     # -------------------------------------------------------------------
-    # 5. SERVICE SETTINGS
+    # 4. SERVICE SETTINGS
     # -------------------------------------------------------------------
     service:
       type: ClusterIP
       port: 8080
 
     # -------------------------------------------------------------------
-    # 6. ENVIRONMENT VARIABLES (Fixed)
+    # 5. ENVIRONMENT VARIABLES (Fixed)
     # -------------------------------------------------------------------
     env:
+      # 1. Tell the Server its own Public URL (Required for correct Link headers)
       - name: HAPI_FHIR_SERVER_ADDRESS
         value: "https://cdr.tail126a09.ts.net/fhir"
-      
-      # Correct method: Pass the complex config via JSON
+
+      # 2. Configure the Tester UI explicitly
       - name: SPRING_APPLICATION_JSON
         value: >-
           {
             "hapi": {
               "fhir": {
                 "tester": {
-                  "global": {
-                    "name": "My CDR",
+                  "home": {
+                    "name": "Tailscale CDR",
                     "server_address": "https://cdr.tail126a09.ts.net/fhir",
                     "refuse_to_fetch_third_party_urls": false,
                     "fhir_version": "R4"
