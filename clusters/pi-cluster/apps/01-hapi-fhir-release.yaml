@@ -101,54 +101,54 @@ spec:
               fhir_version: R4
 
     # Configure initContainers resources as expected by the chart
-    initContainers:
-      resources: {}
-      extraConfig: ""
-      extraVolumes: []
-      extraVolumeMounts: []
+  #   initContainers:
+  #     resources: {}
+  #     extraConfig: ""
+  #     extraVolumes: []
+  #     extraVolumeMounts: []
 
-    # Volume mounts for custom assets
-    volumes:
-      - name: custom-assets
-        emptyDir: {}
-      - name: shared-assets
-        hostPath:
-          path: /config/hapi-fhir/custom-assets/img
-          type: DirectoryOrCreate
-    volumeMounts:
-      - name: custom-assets
-        mountPath: /app/app/img/sample-logo.jpg
-        subPath: sample-logo.jpg
+  #   # Volume mounts for custom assets
+  #   volumes:
+  #     - name: custom-assets
+  #       emptyDir: {}
+  #     - name: shared-assets
+  #       hostPath:
+  #         path: /config/hapi-fhir/custom-assets/img
+  #         type: DirectoryOrCreate
+  #   volumeMounts:
+  #     - name: custom-assets
+  #       mountPath: /app/app/img/sample-logo.jpg
+  #       subPath: sample-logo.jpg
 
-  # Add the custom init container using post-renderer patch
-  postRenderers:
-    - kustomize:
-        patches:
-          - target:
-              kind: Deployment
-              name: hapi-fhir-jpaserver
-            patch: |-
-              - op: add
-                path: /spec/template/spec/initContainers/-
-                value:
-                  name: asset-copier
-                  image: busybox:1.35
-                  command: ['sh', '-c']
-                  args:
-                    - |
-                      mkdir -p /tmp/custom-assets
-                      if [ -f /assets/sample-logo.jpg ]; then
-                        cp /assets/sample-logo.jpg /tmp/custom-assets/sample-logo.jpg
-                        echo "Custom logo copied"
-                      else
-                        echo "Custom logo not found, using default"
-                        # You could download a default custom logo here if needed
-                      fi
-                  volumeMounts:
-                    - name: custom-assets
-                      mountPath: /tmp/custom-assets
-                    - name: shared-assets
-                      mountPath: /assets
+  # # Add the custom init container using post-renderer patch
+  # postRenderers:
+  #   - kustomize:
+  #       patches:
+  #         - target:
+  #             kind: Deployment
+  #             name: hapi-fhir-jpaserver
+  #           patch: |-
+  #             - op: add
+  #               path: /spec/template/spec/initContainers/-
+  #               value:
+  #                 name: asset-copier
+  #                 image: busybox:1.35
+  #                 command: ['sh', '-c']
+  #                 args:
+  #                   - |
+  #                     mkdir -p /tmp/custom-assets
+  #                     if [ -f /assets/sample-logo.jpg ]; then
+  #                       cp /assets/sample-logo.jpg /tmp/custom-assets/sample-logo.jpg
+  #                       echo "Custom logo copied"
+  #                     else
+  #                       echo "Custom logo not found, using default"
+  #                       # You could download a default custom logo here if needed
+  #                     fi
+  #                 volumeMounts:
+  #                   - name: custom-assets
+  #                     mountPath: /tmp/custom-assets
+  #                   - name: shared-assets
+  #                     mountPath: /assets
 
   # env:
   #   - name: FHIR_BASE_URL
