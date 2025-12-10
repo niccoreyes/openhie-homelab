@@ -87,7 +87,9 @@ spec:
     env:
       # 1. Tell the Server its own Public URL (Required for correct Link headers)
       - name: HAPI_FHIR_SERVER_ADDRESS
-        value: "https://cdr.tail126a09.ts.net/fhir"
+        value: "https://cdr.tail126a09.ts.net"
+      - name: SERVER_SERVLET_CONTEXT_PATH
+        value: "/"
       - name: SPRING_PROFILES_ACTIVE
         value: "boot"
 
@@ -101,7 +103,7 @@ spec:
                 "tester": {
                   "home": {
                     "name": "Tailscale CDR",
-                    "server_address": "https://cdr.tail126a09.ts.net/fhir",
+                    "server_address": "https://cdr.tail126a09.ts.net",
                     "refuse_to_fetch_third_party_urls": false,
                     "fhir_version": "R4"
                   }
