@@ -15,44 +15,43 @@ spec:
         name: community-charts
         namespace: flux-system
   values:
-    # Basic configuration for n8n
-    replicaCount: 1
-    
-    image:
-      repository: n8nio/n8n
-      tag: "1.49.0"  # Using a recent stable version
-      pullPolicy: IfNotPresent
+    # Deployment configuration
+    n8n:
+      replicaCount: 1
 
-    # Resource limits (adjusted for Raspberry Pi)
-    # resources:
-    #   limits:
-    #     cpu: "1000m"
-    #     memory: "2Gi"
-    #   requests:
-    #     cpu: "500m"
-    #     memory: "1Gi"
+      image:
+        repository: n8nio/n8n
+        tag: "1.49.0"  # Using a recent stable version
+        pullPolicy: IfNotPresent
 
-    # Service configuration
-    service:
-      type: ClusterIP
-      port: 5678
-      targetPort: 5678
-      annotations: {}
+      # Resource limits (adjusted for Raspberry Pi)
+      # resources:
+      #   limits:
+      #     cpu: "1000m"
+      #     memory: "2Gi"
+      #   requests:
+      #     cpu: "500m"
+      #     memory: "1Gi"
 
-    # Persistence for n8n data
-    persistence:
-      enabled: true
-      size: 5Gi
-      storageClass: null  # Uses default storage class (local-path on K3s)
+      # Service configuration - adjusted to match chart schema
+      service:
+        type: ClusterIP
+        port: 5678
+        # Removed targetPort as it's not allowed in this version
+        annotations: {}
 
-    # Environment variables
-    env:
-      - name: N8N_BASIC_AUTH_ACTIVE
-        value: "false"
-      - name: N8N_METRICS
-        value: "true"
-      - name: N8N_LOG_LEVEL
-        value: "info"
+      # Persistence for n8n data
+      persistence:
+        enabled: true
+        size: 5Gi
+        storageClass: null  # Uses default storage class (local-path on K3s)
+
+      # Environment variables
+      # Using extraEnvs instead of env to match the chart schema
+      config:
+        N8N_BASIC_AUTH_ACTIVE: "false"
+        N8N_METRICS: "true"
+        N8N_LOG_LEVEL: "info"
 
     # Ingress configuration
     ingress:
@@ -74,7 +73,7 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: n8n-ingress
+  name: n8n
   namespace: default
   labels:
     app.kubernetes.io/name: n8n
@@ -91,7 +90,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: n8n-ingress
+                name: n8n
                 port:
                   number: 5678
   tls:
