@@ -15,37 +15,33 @@ spec:
         name: community-charts
         namespace: flux-system
   values:
-    # Main container configuration
+    # Image configuration at top level
+    image:
+      repository: n8nio/n8n
+      tag: "stable"  # Using a recent stable version
+      pullPolicy: IfNotPresent
+
+    # Service configuration at top level
+    service:
+      type: ClusterIP
+      port: 5678
+      name: http
+      annotations: {}
+
+    # Main node configuration
     main:
       count: 1
-      image:
-        repository: n8nio/n8n
-        tag: "stable"  # Using a recent stable version
-        pullPolicy: IfNotPresent
-
-      # Service configuration
-      service:
-        name: http
-        port: 5678
-
-      # Persistence for n8n data
       persistence:
         enabled: true
         size: 5Gi
-        storageClass: ""  # Uses default storage class (local-path on K3s)
         mountPath: "/home/node/.n8n"
-
-      # Environment variables
+        annotations:
+          helm.sh/resource-policy: keep
       extraEnvVars:
         N8N_BASIC_AUTH_ACTIVE: "false"
         N8N_METRICS: "true"
         N8N_LOG_LEVEL: "info"
         N8N_HIRING_BANNER_ENABLED: "false"
-
-    # Service configuration at root level
-    service:
-      type: ClusterIP
-      port: 5678
 
     # Ingress configuration
     ingress:
@@ -60,7 +56,7 @@ spec:
               pathType: Prefix
       tls: []
 
-    # Database configuration (using SQLite by default, can be changed to PostgreSQL if needed)
+    # Database configuration
     db:
       type: sqlite
 
