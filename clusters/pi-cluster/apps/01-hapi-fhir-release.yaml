@@ -106,6 +106,8 @@ metadata:
   labels:
     app.kubernetes.io/name: hapi-fhir-jpaserver
     app.kubernetes.io/component: ingress
+  annotations:
+      tailscale.com/forward-headers: "true"
 spec:
   ingressClassName: tailscale
   tls:
