@@ -88,6 +88,9 @@ spec:
       # 1. Tell the Server its own Public URL (Required for correct Link headers)
       - name: HAPI_FHIR_SERVER_ADDRESS
         value: "https://cdr.tail126a09.ts.net/fhir"
+      - name: SPRING_PROFILES_ACTIVE
+        value: "boot"
+
 
       # 2. Configure the Tester UI explicitly
       - name: SPRING_APPLICATION_JSON
