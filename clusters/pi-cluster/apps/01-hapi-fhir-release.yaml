@@ -94,17 +94,8 @@ spec:
           use_apache_address_strategy: true
           use_apache_address_strategy_https: true
           server_address: "https://cdr.tail126a09.ts.net/fhir"
-        tester:
-          home:
-            name: Local Tester
-            server_address: "https://cdr.tail126a09.ts.net/fhir"
-            refuse_to_fetch_third_party_urls: false
-            fhir_version: R4
-          global:
-            name: FHIR Lab
-            server_address: "http://cdr.fhirlab.net/fhir"
-            refuse_to_fetch_third_party_urls: false
-            fhir_version: R4
+          local_base_urls:
+            - https://cdr.tail126a09.ts.net/fhir
 
 
     env:
