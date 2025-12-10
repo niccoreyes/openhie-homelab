@@ -1,0 +1,13 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: example-job
+  namespace: default
+spec:
+  template:
+    spec:
+      containers:
+      - name: example
+        image: busybox
+        command: ['sh', '-c', 'echo "Running example job"; sleep 30']
+      restartPolicy: OnFailure

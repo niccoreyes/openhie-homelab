@@ -3,10 +3,8 @@ kind: Kustomization
 resources:
   - gotk-components.yaml
   - gotk-sync.yaml
-  - ./apps
-  - ./openhie-apps
-  #- openhie-apps/00-test.yaml
-  # - openhie-apps/01-helm-repositories.yaml
-  # - openhie-apps/02-hapi-fhir-release.yaml
-  # - openhie-apps/03-openhim-release.yaml
-  # - openhie-apps/04-ocl-release.yaml
+  - ../infrastructure
+  - ../config
+  - ../apps
+  - ../jobs
+  - ../repositories

@@ -1,0 +1,138 @@
+# ---
+# # GitRepository to pull the cluster manifests from the repository
+# apiVersion: source.toolkit.fluxcd.io/v1
+# kind: GitRepository
+# metadata:
+#   name: openhie-homelab
+#   namespace: flux-system
+# spec:
+#   interval: 1m
+#   url: ssh://git@github.com/niccoreyes/openhie-homelab.git
+#   ref:
+#     branch: main
+#   secretRef:
+#     name: flux-system
+#   ignore: |
+#     # Exclude the cluster-specific directory from being processed by this cluster
+#     /*
+#     !/clusters/pi-cluster/
+
+# ---
+# # Kustomization to apply the cluster manifests
+# apiVersion: kustomize.toolkit.fluxcd.io/v1
+# kind: Kustomization
+# metadata:
+#   name: pi-cluster
+#   namespace: flux-system
+# spec:
+#   interval: 5m
+#   dependsOn:
+#     - name: openhie-homelab-repos
+#   sourceRef:
+#     kind: GitRepository
+#     name: openhie-homelab
+#   path: ./clusters/pi-cluster
+#   prune: true
+#   timeout: 5m
+#   decryption:
+#     provider: none
+#   validation: client
+
+# ---
+# # Kustomization for Helm repositories
+# apiVersion: kustomize.toolkit.fluxcd.io/v1
+# kind: Kustomization
+# metadata:
+#   name: openhie-homelab-repos
+#   namespace: flux-system
+# spec:
+#   interval: 5m
+#   sourceRef:
+#     kind: GitRepository
+#     name: openhie-homelab
+#   path: ./clusters/pi-cluster/repositories
+#   prune: true
+#   timeout: 5m
+#   decryption:
+#     provider: none
+#   validation: client
+
+# ---
+# # Kustomization for infrastructure components
+# apiVersion: kustomize.toolkit.fluxcd.io/v1
+# kind: Kustomization
+# metadata:
+#   name: openhie-homelab-infra
+#   namespace: flux-system
+# spec:
+#   interval: 5m
+#   dependsOn:
+#     - name: openhie-homelab-repos
+#   sourceRef:
+#     kind: GitRepository
+#     name: openhie-homelab
+#   path: ./clusters/pi-cluster/infrastructure
+#   prune: true
+#   timeout: 5m
+#   decryption:
+#     provider: none
+#   validation: client
+
+# ---
+# # Kustomization for application deployments
+# apiVersion: kustomize.toolkit.fluxcd.io/v1
+# kind: Kustomization
+# metadata:
+#   name: openhie-homelab-apps
+#   namespace: flux-system
+# spec:
+#   interval: 5m
+#   dependsOn:
+#     - name: openhie-homelab-infra
+#   sourceRef:
+#     kind: GitRepository
+#     name: openhie-homelab
+#   path: ./clusters/pi-cluster/apps
+#   prune: true
+#   timeout: 5m
+#   decryption:
+#     provider: none
+#   validation: client
+
+# ---
+# # Kustomization for configuration and secrets
+# apiVersion: kustomize.toolkit.fluxcd.io/v1
+# kind: Kustomization
+# metadata:
+#   name: openhie-homelab-config
+#   namespace: flux-system
+# spec:
+#   interval: 5m
+#   sourceRef:
+#     kind: GitRepository
+#     name: openhie-homelab
+#   path: ./clusters/pi-cluster/config
+#   prune: true
+#   timeout: 5m
+#   decryption:
+#     provider: none
+#   validation: client
+
+# ---
+# # Kustomization for jobs
+# apiVersion: kustomize.toolkit.fluxcd.io/v1
+# kind: Kustomization
+# metadata:
+#   name: openhie-homelab-jobs
+#   namespace: flux-system
+# spec:
+#   interval: 5m
+#   sourceRef:
+#     kind: GitRepository
+#     name: openhie-homelab
+#   path: ./clusters/pi-cluster/jobs
+#   prune: true
+#   timeout: 5m
+#   decryption:
+#     provider: none
+#   validation: client
