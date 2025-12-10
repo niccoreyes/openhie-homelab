@@ -100,26 +100,13 @@ spec:
               refuse_to_fetch_third_party_urls: false
               fhir_version: R4
 
-    # Init container to copy custom assets
+    # Configure initContainers resources as expected by the chart
     initContainers:
-      - name: asset-copier
-        image: busybox:1.35
-        command: ['sh', '-c']
-        args:
-          - |
-            mkdir -p /tmp/custom-assets
-            if [ -f /assets/sample-logo.jpg ]; then
-              cp /assets/sample-logo.jpg /tmp/custom-assets/sample-logo.jpg
-              echo "Custom logo copied"
-            else
-              echo "Custom logo not found, using default"
-              # You could download a default custom logo here if needed
-            fi
-        volumeMounts:
-          - name: custom-assets
-            mountPath: /tmp/custom-assets
-          - name: shared-assets
-            mountPath: /assets
+      resources: {}
+      extraConfig: ""
+      extraVolumes: []
+      extraVolumeMounts: []
+
     # Volume mounts for custom assets
     volumes:
       - name: custom-assets
@@ -133,11 +120,39 @@ spec:
         mountPath: /app/app/img/sample-logo.jpg
         subPath: sample-logo.jpg
 
+  # Add the custom init container using post-renderer patch
+  postRenderers:
+    - kustomize:
+        patches:
+          - target:
+              kind: Deployment
+              name: hapi-fhir-jpaserver
+            patch: |-
+              - op: add
+                path: /spec/template/spec/initContainers/-
+                value:
+                  name: asset-copier
+                  image: busybox:1.35
+                  command: ['sh', '-c']
+                  args:
+                    - |
+                      mkdir -p /tmp/custom-assets
+                      if [ -f /assets/sample-logo.jpg ]; then
+                        cp /assets/sample-logo.jpg /tmp/custom-assets/sample-logo.jpg
+                        echo "Custom logo copied"
+                      else
+                        echo "Custom logo not found, using default"
+                        # You could download a default custom logo here if needed
+                      fi
+                  volumeMounts:
+                    - name: custom-assets
+                      mountPath: /tmp/custom-assets
+                    - name: shared-assets
+                      mountPath: /assets
 
-
-    # env:
-    #   - name: FHIR_BASE_URL
-    #     value: "https://cdr.tail126a09.ts.net/fhir"
+  # env:
+  #   - name: FHIR_BASE_URL
+  #     value: "https://cdr.tail126a09.ts.net/fhir"
 
 ---
 apiVersion: networking.k8s.io/v1
