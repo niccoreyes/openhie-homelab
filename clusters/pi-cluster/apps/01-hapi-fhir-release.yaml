@@ -63,14 +63,14 @@ spec:
         username: postgres
         password: "password"
         database: fhir
-      # primary:
-      #   resources:
-      #     limits:
-      #       cpu: "500m"
-      #       memory: "512Mi"
-      #     requests:
-      #       cpu: "100m"
-      #       memory: "256Mi"
+      primary:
+        resources:
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+          requests:
+            cpu: "100m"
+            memory: "256Mi"
       persistence:
         enabled: true
         size: 20Gi
