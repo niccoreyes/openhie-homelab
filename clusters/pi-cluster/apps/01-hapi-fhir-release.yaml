@@ -93,12 +93,11 @@ spec:
           fhir_version: R4
           server_address: "https://cdr.tail126a09.ts.net/fhir"
           tester:
-            -
-              id: tailscale
-              name: FHIR Tail
-              server_address: 'https://cdr.tail126a09.ts.net/fhir'
-              refuse_to_fetch_third_party_urls: false
-              fhir_version: R4
+              home:
+                name: FHIR Tail
+                server_address: 'https://cdr.tail126a09.ts.net/fhir'
+                refuse_to_fetch_third_party_urls: false
+                fhir_version: R4
 
     # Configure initContainers resources as expected by the chart
   #   initContainers:
