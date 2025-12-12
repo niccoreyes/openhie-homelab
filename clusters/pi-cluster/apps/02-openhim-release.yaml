@@ -83,7 +83,7 @@ spec:
     spec:
       containers:
       - name: mongo
-        image: mongo:4.0
+        image: mongo:4.2
         ports:
         - containerPort: 27017
         # resources:
@@ -136,18 +136,18 @@ spec:
           value: "production"
         # - name: NODE_ENV
         #   value: "development"
-        # - name: api_authenticationTypes
-        #   value: "[\"token\", \"basic\", \"openid\", \"local\"]"
-        # - name: authentication_enableCustomTokenAuthentication
-        #   value: "true"
-        # - name: authentication_enableJWTAuthentication
-        #   value: "true"
-        # - name: authentication_jwt_secretOrPublicKey
-        #   value: "secret"
-        # - name: authentication_jwt_algorithms
-        #   value: "HS256"
-        # - name: authentication_jwt_issuer
-        #   value: "openhim"
+        - name: api_authenticationTypes
+          value: "[\"token\", \"basic\", \"openid\", \"local\"]"
+        - name: authentication_enableCustomTokenAuthentication
+          value: "true"
+        - name: authentication_enableJWTAuthentication
+          value: "true"
+        - name: authentication_jwt_secretOrPublicKey
+          value: "secret"
+        - name: authentication_jwt_algorithms
+          value: "HS256"
+        - name: authentication_jwt_issuer
+          value: "openhim"
         - name: openhimConsoleBaseUrl
           value: "https://openhim-console.tail126a09.ts.net"
         ports:
