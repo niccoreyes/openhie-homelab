@@ -1,26 +1,234 @@
-apiVersion: helm.toolkit.fluxcd.io/v2
-kind: HelmRelease
+# OpenHIM MongoDB Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openhim-mongo
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: openhim-mongo
+  template:
+    metadata:
+      labels:
+        app: openhim-mongo
+    spec:
+      containers:
+      - name: mongo
+        image: mongo:3.4
+        ports:
+        - containerPort: 27017
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "1000m"
+---
+# OpenHIM MongoDB Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: openhim-mongo
+  namespace: default
+spec:
+  selector:
+    app: openhim-mongo
+  ports:
+    - protocol: TCP
+      port: 27017
+      targetPort: 27017
+---
+# OpenHIM Core ConfigMap for default.json
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: openhim-console-config
+  namespace: default
+data:
+  default.json: |
+    {
+      "version": "1.10.0",
+      "minimumCoreVersion": "3.4.0",
+      "protocol": "https",
+      "host": "localhost",
+      "port": 8080,
+      "title": "Admin Console",
+      "footerTitle": "OpenHIM Administration Console",
+      "footerPoweredBy": "<a href='http://openhim.org/' target='_blank'>Powered by OpenHIM</a>",
+      "loginBanner": "",
+      "mediatorLastHeartbeatWarningSeconds": 60,
+      "mediatorLastHeartbeatDangerSeconds": 120
+    }
+---
+# OpenHIM Core Deployment
+apiVersion: apps/v1
+kind: Deployment
 metadata:
   name: openhim-core
   namespace: default
 spec:
-  interval: 5m
-  chart:
+  selector:
+    matchLabels:
+      app: openhim-core
+  template:
+    metadata:
+      labels:
+        app: openhim-core
     spec:
-      chart: openhim-core
-      version: "4.0.x" # Check latest version
-      sourceRef:
-        kind: HelmRepository
-        name: opensrp # Assuming OpenSRP community chart is used
-        namespace: flux-system
-  values:
-    mongodb:
-      enabled: true # Deploy a simple MongoDB for OpenHIM storage
-      persistence:
-        size: 5Gi # Requires a Persistent Volume on the Pi (local-path provisioner is default in K3s)
-    service:
-      type: NodePort # Expose the console/API for external access
-      nodePort: 9000
-    # Set initial credentials (CHANGE THESE!)
-    openhim:
-      initialUserPassword: "<YOUR_OPENHIM_PASSWORD>"
+      containers:
+      - name: openhim-core
+        image: jembi/openhim-core
+        env:
+        - name: mongo_url
+          value: "mongodb://openhim-mongo/openhim"
+        - name: mongo_atnaUrl
+          value: "mongodb://openhim-mongo/openhim"
+        ports:
+        - containerPort: 8080
+        - containerPort: 5000
+        - containerPort: 5001
+        - containerPort: 5050
+        - containerPort: 5051
+        - containerPort: 5052
+        - containerPort: 7788
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "1000m"
+---
+# OpenHIM Core Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: openhim-core
+  namespace: default
+spec:
+  selector:
+    app: openhim-core
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+    - name: https-5000
+      protocol: TCP
+      port: 5000
+      targetPort: 5000
+    - name: https-5001
+      protocol: TCP
+      port: 5001
+      targetPort: 5001
+    - name: https-5050
+      protocol: TCP
+      port: 5050
+      targetPort: 5050
+    - name: https-5051
+      protocol: TCP
+      port: 5051
+      targetPort: 5051
+    - name: https-5052
+      protocol: TCP
+      port: 5052
+      targetPort: 5052
+    - name: https-7788
+      protocol: TCP
+      port: 7788
+      targetPort: 7788
+---
+# OpenHIM Console Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openhim-console
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: openhim-console
+  template:
+    metadata:
+      labels:
+        app: openhim-console
+    spec:
+      containers:
+      - name: openhim-console
+        image: jembi/openhim-console
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: config-volume
+          mountPath: /usr/share/nginx/html/config/default.json
+          subPath: default.json
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+      volumes:
+      - name: config-volume
+        configMap:
+          name: openhim-console-config
+---
+# OpenHIM Console Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: openhim-console
+  namespace: default
+spec:
+  selector:
+    app: openhim-console
+  ports:
+    - protocol: TCP
+      port: 9000
+      targetPort: 80
+---
+# OpenHIM Core Ingress
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: openhim-core-ingress
+  namespace: default
+  labels:
+    app.kubernetes.io/name: openhim-core
+    app.kubernetes.io/component: ingress
+spec:
+  ingressClassName: tailscale
+  tls:
+  - hosts:
+      - openhim
+  rules:
+    - host: openhim
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: openhim-core
+                port:
+                  number: 8080
+---
+# OpenHIM Console Ingress
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: openhim-console-ingress
+  namespace: default
+  labels:
+    app.kubernetes.io/name: openhim-console
+    app.kubernetes.io/component: ingress
+spec:
+  ingressClassName: tailscale
+  tls:
+  - hosts:
+      - openhim-console
+  rules:
+    - host: openhim-console
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: openhim-console
+                port:
+                  number: 9000
