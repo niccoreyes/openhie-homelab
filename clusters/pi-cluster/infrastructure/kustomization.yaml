@@ -3,3 +3,4 @@ kind: Kustomization
 resources:
   - portainer.yaml
   - tailscale-operator.yaml
+  - headlamp.yaml

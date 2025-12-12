@@ -1,0 +1,75 @@
+# clusters/pi-cluster/infrastructure/headlamp.yaml
+
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: headlamp
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: headlamp
+  namespace: headlamp
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: headlamp
+      version: "0.19.0"  # Using the latest stable version
+      sourceRef:
+        kind: HelmRepository
+        name: headlamp
+        namespace: flux-system
+  values:
+    # Headlamp configuration
+    service:
+      type: ClusterIP
+      port: 80
+    
+    # Enable Flux plugin
+    plugins:
+      enabled: true
+      flux:
+        enabled: true
+        # Configuration for Flux plugin
+        # You can add specific Flux plugin configuration here if needed
+    
+    # Resource limits (optional)
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "128Mi"
+      limits:
+        cpu: "500m"
+        memory: "512Mi"
+    
+    # Ingress configuration will be handled separately
+    ingress:
+      enabled: false
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: headlamp-ingress
+  namespace: headlamp
+  labels:
+    app.kubernetes.io/name: headlamp
+    app.kubernetes.io/component: ingress
+spec:
+  ingressClassName: tailscale
+  tls:
+  - hosts:
+      - headlamp
+  rules:
+    - host: headlamp
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: headlamp
+                port:
+                  number: 80
