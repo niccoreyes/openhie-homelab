@@ -253,21 +253,21 @@ spec:
         #     cpu: "500m"
         volumeMounts:
         - name: config-volume
-          mountPath: /usr/share/nginx/html/config/default.json
-          subPath: default.json
+          mountPath: /usr/share/nginx/html/config/config.json
+          subPath: config.json
       volumes:
       - name: config-volume
         configMap:
           name: openhim-console-config
 ---
-# OpenHIM Console ConfigMap for default.json
+# OpenHIM Console ConfigMap for config.json
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: openhim-console-config
   namespace: openhim
 data:
-  default.json: |
+  config.json: |
     {
       "version": "1.10.2",
       "minimumCoreVersion": "3.4.0",
