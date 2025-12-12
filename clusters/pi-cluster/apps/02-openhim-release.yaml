@@ -109,17 +109,22 @@ metadata:
 data:
   default.json: |
     {
-      "version": "1.10.0",
-      "minimumCoreVersion": "3.4.0",
+      "version": "1.18.2",
+      "minimumCoreVersion": "5.2.0",
       "protocol": "https",
-      "host": "openhim.tail126a09.ts.net",
-      "port": 433,
+      "host": "openhim-core",
+      "port": "8080",
       "title": "Admin Console",
       "footerTitle": "OpenHIM Administration Console",
       "footerPoweredBy": "<a href='http://openhim.org/' target='_blank'>Powered by OpenHIM</a>",
       "loginBanner": "",
       "mediatorLastHeartbeatWarningSeconds": 60,
-      "mediatorLastHeartbeatDangerSeconds": 120
+      "mediatorLastHeartbeatDangerSeconds": 120,
+      "showLoginForm": true,
+      "ssoEnabled": false,
+      "keyCloakUrl": "http://localhost:9088",
+      "keyCloakRealm": "platform-realm",
+      "keyCloakClientId": "openhim-oauth"
     }
 ---
 # OpenHIM Core Deployment
@@ -252,6 +257,8 @@ spec:
         ports:
         - containerPort: 9000
         volumeMounts:
+        - name: config-dir
+          mountPath: /usr/share/nginx/html/config
         - name: config-volume
           mountPath: /usr/share/nginx/html/config/default.json
           subPath: default.json
@@ -278,6 +285,8 @@ spec:
         #     memory: "256Mi"
         #     cpu: "500m"
       volumes:
+      - name: config-dir
+        emptyDir: {}
       - name: config-volume
         configMap:
           name: openhim-console-config
