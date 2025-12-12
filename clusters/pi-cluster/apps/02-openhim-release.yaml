@@ -123,6 +123,8 @@ spec:
           value: "mongodb://openhim-mongo/openhim"
         - name: mongo_atnaUrl
           value: "mongodb://openhim-mongo/openhim"
+        - name: NODE_ENV
+          value: "production"
         # - name: NODE_ENV
         #   value: "development"
         # - name: api_authenticationTypes
