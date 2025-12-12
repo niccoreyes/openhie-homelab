@@ -1,6 +1,6 @@
 # clusters/pi-cluster/infrastructure/headlamp.yaml
 # To create Auth secret token, run this on the remote server:
-# kubectl create token headlamp-admin -n headlamp
+# kubectl create token headlamp-admin -n kube-system
 ---
 apiVersion: v1
 kind: Namespace
