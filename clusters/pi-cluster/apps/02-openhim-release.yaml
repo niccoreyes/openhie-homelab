@@ -100,33 +100,6 @@ spec:
       port: 27017
       targetPort: 27017
 ---
-# OpenHIM Core ConfigMap for default.json
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: openhim-console-config
-  namespace: openhim
-data:
-  default.json: |
-    {
-      "version": "1.10.1",
-      "minimumCoreVersion": "3.4.0",
-      "protocol": "https",
-      "host": "openhim-console.tail126a09.ts.net",
-      "port": "",
-      "title": "Admin Console",
-      "footerTitle": "OpenHIM Administration Console",
-      "footerPoweredBy": "<a href='http://openhim.org/' target='_blank'>Powered by OpenHIM</a>",
-      "loginBanner": "",
-      "mediatorLastHeartbeatWarningSeconds": 60,
-      "mediatorLastHeartbeatDangerSeconds": 120,
-      "showLoginForm": true,
-      "ssoEnabled": false,
-      "keyCloakUrl": "http://localhost:9088",
-      "keyCloakRealm": "platform-realm",
-      "keyCloakClientId": "openhim-oauth"
-    }
----
 # OpenHIM Core Deployment
 apiVersion: apps/v1
 kind: Deployment
@@ -152,18 +125,18 @@ spec:
           value: "mongodb://openhim-mongo/openhim"
         # - name: NODE_ENV
         #   value: "development"
-        - name: api_authenticationTypes
-          value: "[\"token\", \"basic\", \"openid\", \"local\"]"
-        - name: authentication_enableCustomTokenAuthentication
-          value: "true"
-        - name: authentication_enableJWTAuthentication
-          value: "true"
-        - name: authentication_jwt_secretOrPublicKey
-          value: "secret"
-        - name: authentication_jwt_algorithms
-          value: "HS256"
-        - name: authentication_jwt_issuer
-          value: "openhim"
+        # - name: api_authenticationTypes
+        #   value: "[\"token\", \"basic\", \"openid\", \"local\"]"
+        # - name: authentication_enableCustomTokenAuthentication
+        #   value: "true"
+        # - name: authentication_enableJWTAuthentication
+        #   value: "true"
+        # - name: authentication_jwt_secretOrPublicKey
+        #   value: "secret"
+        # - name: authentication_jwt_algorithms
+        #   value: "HS256"
+        # - name: authentication_jwt_issuer
+        #   value: "openhim"
         - name: openhimConsoleBaseUrl
           value: "https://openhim-console.tail126a09.ts.net"
         ports:
@@ -256,10 +229,6 @@ spec:
         image: jembi/openhim-console:latest
         ports:
         - containerPort: 80
-        volumeMounts:
-        - name: config-volume
-          mountPath: /usr/share/nginx/html/config/default.json
-          subPath: default.json
         livenessProbe:
           httpGet:
             path: /
@@ -282,10 +251,37 @@ spec:
         #   limits:
         #     memory: "256Mi"
         #     cpu: "500m"
+        volumeMounts:
+        - name: config-volume
+          mountPath: /usr/share/nginx/html/config/default.json
+          subPath: default.json
       volumes:
       - name: config-volume
         configMap:
           name: openhim-console-config
+---
+# OpenHIM Console ConfigMap for default.json
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: openhim-console-config
+  namespace: openhim
+data:
+  default.json: |
+    {
+      "version": "1.10.2",
+      "minimumCoreVersion": "3.4.0",
+      "protocol": "https",
+      "host": "openhim-console.tail126a09.ts.net",
+      "port": "",
+      "title": "Admin Console",
+      "footerTitle": "OpenHIM Administration Console",
+      "footerPoweredBy": "<a href='http://openhim.org/' target='_blank'>Powered by OpenHIM</a>",
+      "loginBanner": "",
+      "mediatorLastHeartbeatWarningSeconds": 60,
+      "mediatorLastHeartbeatDangerSeconds": 120,
+      "showLoginForm": true,
+    }
 ---
 # OpenHIM Console Service
 apiVersion: v1
