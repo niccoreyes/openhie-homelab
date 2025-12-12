@@ -5,3 +5,9 @@ resources:
   - 02-openhim-release.yaml
   # - 03-ocl-release.yaml
   - 04-n8n-release.yaml
+configMapGenerator:
+  - name: openhim-console-config
+    files:
+      - default.json=default.json
+generatorOptions:
+  disableNameSuffixHash: false
