@@ -136,6 +136,8 @@ spec:
           value: "production"
         # - name: NODE_ENV
         #   value: "development"
+        - name: api_port
+          value: "8080"
         - name: api_authenticationTypes
           value: "[\"token\", \"basic\", \"openid\", \"local\"]"
         - name: authentication_enableCustomTokenAuthentication
@@ -363,4 +365,4 @@ spec:
               service:
                 name: openhim-core
                 port:
-                  number: 8080
+                  number: 5000
