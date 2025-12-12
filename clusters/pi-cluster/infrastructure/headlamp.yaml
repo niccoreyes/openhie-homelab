@@ -4,7 +4,7 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: headlamp
+  name: flux-system
 ---
 # Service Account for Headlamp authentication
 # kubectl -n kube-system create serviceaccount headlamp-admin
@@ -12,17 +12,17 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: headlamp-admin
-  namespace: headlamp
+  namespace: flux-system
 ---
 # ClusterRoleBinding to grant admin access to Headlamp ServiceAccount
-# kubectl create clusterrolebinding headlamp-admin --serviceaccount=kube-system:headlamp-admin --clusterrole=cluster-admin
+# kubectl create clusterrolebinding headlamp-admin --serviceaccount=flux-system:headlamp-admin --clusterrole=cluster-admin
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: headlamp-admin
+  name: flux-system
 subjects:
 - kind: ServiceAccount
-  name: headlamp-admin
+  name: flux-system
   namespace: headlamp
 roleRef:
   kind: ClusterRole
@@ -33,13 +33,13 @@ apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: headlamp
-  namespace: headlamp
+  namespace: flux-system
 spec:
   interval: 5m
   chart:
     spec:
       chart: headlamp
-      version: "0.19.0"  # Using the latest stable version
+      version: "*"  # Using the latest stable version
       sourceRef:
         kind: HelmRepository
         name: headlamp
@@ -56,9 +56,10 @@ spec:
       # Configure Headlamp to use ServiceAccount token authentication
       # This allows automatic token-based authentication without manual kubectl commands
       enableDynamicPlugins: true
-      clusterName: "pi-cluster"
-      # Enable in-cluster config for automatic service account token mounting
       inCluster: true
+      kubeConfigPath: ""
+      oidc:
+        enabled: false
     
     # Init container to install Flux plugin
     initContainers:
@@ -117,7 +118,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: headlamp-ingress
-  namespace: headlamp
+  namespace: flux-system
   labels:
     app.kubernetes.io/name: headlamp
     app.kubernetes.io/component: ingress
