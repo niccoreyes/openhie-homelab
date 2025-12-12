@@ -55,8 +55,8 @@ data:
       "version": "1.10.0",
       "minimumCoreVersion": "3.4.0",
       "protocol": "https",
-      "host": "openhim-console.tail126a09.ts.net",
-      "port": 443,
+      "host": "localhost",
+      "port": 8080,
       "title": "Admin Console",
       "footerTitle": "OpenHIM Administration Console",
       "footerPoweredBy": "<a href='http://openhim.org/' target='_blank'>Powered by OpenHIM</a>",
@@ -159,7 +159,7 @@ spec:
       - name: openhim-console
         image: jembi/openhim-console
         ports:
-        - containerPort: 80
+        - containerPort: 9000
         volumeMounts:
         - name: config-volume
           mountPath: /usr/share/nginx/html/config/default.json
@@ -185,33 +185,33 @@ spec:
   ports:
     - protocol: TCP
       port: 9000
-      targetPort: 80
----
-# OpenHIM Core Ingress
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: openhim-core-ingress
-  namespace: openhim
-  labels:
-    app.kubernetes.io/name: openhim-core
-    app.kubernetes.io/component: ingress
-spec:
-  ingressClassName: tailscale
-  tls:
-  - hosts:
-      - openhim
-  rules:
-    - host: openhim
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: openhim-core
-                port:
-                  number: 8080
+      targetPort: 9000
+# ---
+# # OpenHIM Core Ingress
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: openhim-core-ingress
+#   namespace: openhim
+#   labels:
+#     app.kubernetes.io/name: openhim-core
+#     app.kubernetes.io/component: ingress
+# spec:
+#   ingressClassName: tailscale
+#   tls:
+#   - hosts:
+#       - openhim
+#   rules:
+#     - host: openhim
+#       http:
+#         paths:
+#           - path: /
+#             pathType: Prefix
+#             backend:
+#               service:
+#                 name: openhim-core
+#                 port:
+#                   number: 8080
 ---
 # OpenHIM Console Ingress
 apiVersion: networking.k8s.io/v1
