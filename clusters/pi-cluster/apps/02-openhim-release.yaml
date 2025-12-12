@@ -109,11 +109,11 @@ metadata:
 data:
   default-dev.json: |
     {
-      "version": "1.18.2",
-      "minimumCoreVersion": "5.2.0",
+      "version": "1.10.1",
+      "minimumCoreVersion": "3.4.0",
       "protocol": "https",
-      "host": "openhim",
-      "port": "443",
+      "host": "localhost",
+      "port": "8080",
       "title": "Admin Console",
       "footerTitle": "OpenHIM Administration Console",
       "footerPoweredBy": "<a href='http://openhim.org/' target='_blank'>Powered by OpenHIM</a>",
@@ -147,11 +147,11 @@ spec:
         image: jembi/openhim-core:latest
         env:
         - name: mongo_url
-          value: "mongodb://openhim-mongo/openhim-development"
+          value: "mongodb://openhim-mongo/openhim"
         - name: mongo_atnaUrl
-          value: "mongodb://openhim-mongo/openhim-development"
-        - name: NODE_ENV
-          value: "development"
+          value: "mongodb://openhim-mongo/openhim"
+        # - name: NODE_ENV
+        #   value: "development"
         - name: api_authenticationTypes
           value: "[\"token\", \"basic\", \"openid\", \"local\"]"
         - name: authentication_enableCustomTokenAuthentication
@@ -255,15 +255,15 @@ spec:
       - name: openhim-console
         image: jembi/openhim-console:latest
         ports:
-        - containerPort: 9000
+        - containerPort: 80
         volumeMounts:
         - name: config-volume
-          mountPath: /usr/share/nginx/html/config/default-dev.json
-          subPath: default-dev.json
+          mountPath: /usr/share/nginx/html/config/default.json
+          subPath: default.json
         livenessProbe:
           httpGet:
             path: /
-            port: 9000
+            port: 80
             scheme: HTTP
           initialDelaySeconds: 30
           periodSeconds: 30
@@ -272,7 +272,7 @@ spec:
         readinessProbe:
           httpGet:
             path: /
-            port: 9000
+            port: 80
             scheme: HTTP
           initialDelaySeconds: 30
           periodSeconds: 30
@@ -283,8 +283,6 @@ spec:
         #     memory: "256Mi"
         #     cpu: "500m"
       volumes:
-      - name: config-dir
-        emptyDir: {}
       - name: config-volume
         configMap:
           name: openhim-console-config
@@ -301,7 +299,7 @@ spec:
   ports:
     - protocol: TCP
       port: 9000
-      targetPort: 9000
+      targetPort: 80
 ---
 # OpenHIM Core Ingress
 apiVersion: networking.k8s.io/v1
