@@ -60,6 +60,11 @@ apiVersion: v1
 kind: Namespace
 metadata:
   name: openhim
+
+
+#####
+# MongoDB
+#####
 ---
 # OpenHIM MongoDB Deployment
 apiVersion: apps/v1
@@ -99,6 +104,10 @@ spec:
     - protocol: TCP
       port: 27017
       targetPort: 27017
+
+#####
+# CORE
+#####
 ---
 # OpenHIM Core Deployment
 apiVersion: apps/v1
@@ -211,6 +220,10 @@ spec:
       port: 7788
       targetPort: 7788
 ---
+#####
+# CONSOLE
+#####
+---
 # OpenHIM Console Deployment
 apiVersion: apps/v1
 kind: Deployment
@@ -299,32 +312,6 @@ spec:
       port: 9000
       targetPort: 80
 ---
-# OpenHIM Core Ingress
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: openhim-core-ingress
-  namespace: openhim
-  labels:
-    app.kubernetes.io/name: openhim-core
-    app.kubernetes.io/component: ingress
-spec:
-  ingressClassName: tailscale
-  tls:
-  - hosts:
-      - openhim
-  rules:
-    - host: openhim
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: openhim-core
-                port:
-                  number: 8080
----
 # OpenHIM Console Ingress
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -350,3 +337,30 @@ spec:
                 name: openhim-console
                 port:
                   number: 9000
+---
+# OpenHIM Core Ingress
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: openhim-core-ingress
+  namespace: openhim
+  labels:
+    app.kubernetes.io/name: openhim-core
+    app.kubernetes.io/component: ingress
+spec:
+  ingressClassName: tailscale
+  tls:
+  - hosts:
+      - openhim
+  rules:
+    - host: openhim
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: openhim-core
+                port:
+                  number: 8080
