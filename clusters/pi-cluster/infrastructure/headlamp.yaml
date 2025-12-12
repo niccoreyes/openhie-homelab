@@ -1,11 +1,11 @@
 # clusters/pi-cluster/infrastructure/headlamp.yaml
 
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: flux-system
----
+# ---
+# apiVersion: v1
+# kind: Namespace
+# metadata:
+#   name: flux-system
+# ---
 # Service Account for Headlamp authentication
 # kubectl -n kube-system create serviceaccount headlamp-admin
 apiVersion: v1
@@ -23,7 +23,7 @@ metadata:
 subjects:
 - kind: ServiceAccount
   name: flux-system
-  namespace: headlamp
+  namespace: flux-system
 roleRef:
   kind: ClusterRole
   name: cluster-admin
