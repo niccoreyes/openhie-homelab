@@ -36,6 +36,10 @@ metadata:
   namespace: headlamp-system
   labels:
     app: headlamp
+    app.kubernetes.io/name: headlamp
+    app.kubernetes.io/instance: headlamp
+    app.kubernetes.io/part-of: infrastructure
+    app.kubernetes.io/managed-by: flux
 spec:
   interval: 5m
   chart:
@@ -117,6 +121,11 @@ kind: Service
 metadata:
   name: headlamp-service
   namespace: headlamp-system
+  labels:
+    app: headlamp
+    app.kubernetes.io/name: headlamp
+    app.kubernetes.io/instance: headlamp
+    app.kubernetes.io/part-of: infrastructure
 spec:
   type: ClusterIP
   selector:
@@ -134,13 +143,29 @@ kind: Ingress
 metadata:
   name: headlamp-ingress
   namespace: headlamp-system
+  labels:
+    app: headlamp
+    app.kubernetes.io/name: headlamp
+    app.kubernetes.io/instance: headlamp
+    app.kubernetes.io/part-of: infrastructure
 spec:
   ingressClassName: tailscale
   tls:
   - hosts:
       - headlamp
+      - headlamp.tail126a09.ts.net
   rules:
     - host: headlamp
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: headlamp-service
+                port:
+                  number: 80
+    - host: headlamp.tail126a09.ts.net
       http:
         paths:
           - path: /
