@@ -7,6 +7,7 @@ metadata:
   name: headlamp
 ---
 # Service Account for Headlamp authentication
+# kubectl -n kube-system create serviceaccount headlamp-admin
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -14,6 +15,7 @@ metadata:
   namespace: headlamp
 ---
 # ClusterRoleBinding to grant admin access to Headlamp ServiceAccount
+# kubectl create clusterrolebinding headlamp-admin --serviceaccount=kube-system:headlamp-admin --clusterrole=cluster-admin
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
@@ -26,17 +28,6 @@ roleRef:
   kind: ClusterRole
   name: cluster-admin
   apiGroup: rbac.authorization.k8s.io
----
-# Secret to store the ServiceAccount token (will be auto-populated by Kubernetes)
-# This allows Headlamp to automatically use the token without manual intervention
-apiVersion: v1
-kind: Secret
-metadata:
-  name: headlamp-admin-token
-  namespace: headlamp
-  annotations:
-    kubernetes.io/service-account.name: headlamp-admin
-type: kubernetes.io/service-account-token
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
@@ -103,10 +94,10 @@ spec:
         persistentVolumeClaim:
           claimName: headlamp
       # Mount the ServiceAccount token for automatic authentication
-      - name: headlamp-token
-        secret:
-          secretName: headlamp-admin-token
-          optional: false
+      # - name: headlamp-token
+      #   secret:
+      #     secretName: headlamp-admin-token
+      #     optional: false
     
     # Resource limits (optional)
     resources:
