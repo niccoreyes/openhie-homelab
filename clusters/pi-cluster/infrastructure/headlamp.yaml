@@ -15,7 +15,7 @@ metadata:
   namespace: headlamp-system
 ---
 # ClusterRoleBinding to grant admin access to Headlamp ServiceAccount
-# kubectl create clusterrolebinding headlamp-admin --serviceaccount=flux-system:headlamp-admin --clusterrole=cluster-admin
+# kubectl create clusterrolebinding headlamp-admin --serviceaccount=headlamp-system:headlamp-admin --clusterrole=cluster-admin
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
@@ -45,7 +45,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: headlamp
-        namespace: headlamp-system
+        namespace: flux-system
   values:
     # Headlamp configuration based on official Flux plugin documentation
     # service:
@@ -147,6 +147,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: headlamp
+                name: headlamp-service
                 port:
                   number: 80
