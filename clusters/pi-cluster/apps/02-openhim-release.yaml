@@ -112,7 +112,7 @@ data:
       "version": "1.10.0",
       "minimumCoreVersion": "3.4.0",
       "protocol": "https",
-      "host": "openhim-core.tail126a09.ts.net",
+      "host": "openhim.tail126a09.ts.net",
       "port": 433,
       "title": "Admin Console",
       "footerTitle": "OpenHIM Administration Console",
