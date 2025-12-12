@@ -4,4 +4,3 @@ resources:
   - portainer.yaml
   - tailscale-operator.yaml
   - headlamp.yaml
-  - headlamp-tls-secret.yaml
