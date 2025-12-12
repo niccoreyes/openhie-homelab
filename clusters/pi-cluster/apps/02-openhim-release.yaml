@@ -160,24 +160,24 @@ spec:
         - containerPort: 5051
         - containerPort: 5052
         - containerPort: 7788
-        livenessProbe:
-          httpGet:
-            path: /heartbeat
-            port: 8080
-            scheme: HTTP
-          initialDelaySeconds: 30
-          periodSeconds: 30
-          timeoutSeconds: 30
-          failureThreshold: 3
-        readinessProbe:
-          httpGet:
-            path: /heartbeat
-            port: 8080
-            scheme: HTTP
-          initialDelaySeconds: 30
-          periodSeconds: 30
-          timeoutSeconds: 30
-          failureThreshold: 3
+        # livenessProbe:
+        #   httpGet:
+        #     path: /heartbeat
+        #     port: 8080
+        #     scheme: HTTP
+        #   initialDelaySeconds: 30
+        #   periodSeconds: 30
+        #   timeoutSeconds: 30
+        #   failureThreshold: 3
+        # readinessProbe:
+        #   httpGet:
+        #     path: /heartbeat
+        #     port: 8080
+        #     scheme: HTTP
+        #   initialDelaySeconds: 30
+        #   periodSeconds: 30
+        #   timeoutSeconds: 30
+        #   failureThreshold: 3
         # resources:
         #   limits:
         #     memory: "512Mi"
