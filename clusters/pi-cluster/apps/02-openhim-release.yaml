@@ -107,13 +107,13 @@ metadata:
   name: openhim-console-config
   namespace: openhim
 data:
-  default.json: |
+  default-dev.json: |
     {
       "version": "1.18.2",
       "minimumCoreVersion": "5.2.0",
       "protocol": "https",
-      "host": "openhim-core",
-      "port": "8080",
+      "host": "openhim",
+      "port": "443",
       "title": "Admin Console",
       "footerTitle": "OpenHIM Administration Console",
       "footerPoweredBy": "<a href='http://openhim.org/' target='_blank'>Powered by OpenHIM</a>",
