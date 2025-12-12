@@ -280,7 +280,7 @@ data:
       "loginBanner": "",
       "mediatorLastHeartbeatWarningSeconds": 60,
       "mediatorLastHeartbeatDangerSeconds": 120,
-      "showLoginForm": true,
+      "showLoginForm": true
     }
 ---
 # OpenHIM Console Service
