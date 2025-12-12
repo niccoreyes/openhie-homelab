@@ -107,7 +107,7 @@ metadata:
   name: openhim-console-config
   namespace: openhim
 data:
-  default-dev.json: |
+  default.json: |
     {
       "version": "1.10.1",
       "minimumCoreVersion": "3.4.0",
