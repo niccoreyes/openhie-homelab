@@ -52,9 +52,9 @@ spec:
         namespace: flux-system
   values:
     # Headlamp configuration based on official Flux plugin documentation
-    # service:
-    #   type: ClusterIP
-    #   port: 80
+    service:
+      type: ClusterIP
+      port: 4466
     
     # Flux plugin configuration using initContainer approach
     config:
@@ -133,9 +133,8 @@ spec:
   ports:
     - name: http
       protocol: TCP
-      port: 80
-      targetPort: 80
-    # nodePort: 30777 # <-- Removed NodePort since we are using Ingress
+      port: 4466
+      targetPort: 4466
       
 ---
 apiVersion: networking.k8s.io/v1
@@ -153,7 +152,6 @@ spec:
   tls:
   - hosts:
       - headlamp
-      - headlamp.tail126a09.ts.net
   rules:
     - host: headlamp
       http:
@@ -164,14 +162,4 @@ spec:
               service:
                 name: headlamp-service
                 port:
-                  number: 80
-    - host: headlamp.tail126a09.ts.net
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: headlamp-service
-                port:
-                  number: 80
+                  number: 4466
