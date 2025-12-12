@@ -257,11 +257,9 @@ spec:
         ports:
         - containerPort: 9000
         volumeMounts:
-        - name: config-dir
-          mountPath: /usr/share/nginx/html/config
         - name: config-volume
-          mountPath: /usr/share/nginx/html/config/default.json
-          subPath: default.json
+          mountPath: /usr/share/nginx/html/config/default-dev.json
+          subPath: default-dev.json
         livenessProbe:
           httpGet:
             path: /
