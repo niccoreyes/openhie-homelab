@@ -22,18 +22,48 @@ spec:
         name: headlamp
         namespace: flux-system
   values:
-    # Headlamp configuration
+    # Headlamp configuration based on official Flux plugin documentation
     service:
       type: ClusterIP
       port: 80
     
-    # Enable Flux plugin
-    plugins:
+    # Flux plugin configuration using initContainer approach
+    config:
+      pluginsDir: /build/plugins
+    
+    # Init container to install Flux plugin
+    initContainers:
+      - command:
+          - /bin/sh
+          - -c
+          - mkdir -p /build/plugins && cp -r /plugins/* /build/plugins/ && chown -R 100:101 /build
+        image: ghcr.io/headlamp-k8s/headlamp-plugin-flux:latest
+        imagePullPolicy: Always
+        name: headlamp-plugins
+        securityContext:
+          runAsNonRoot: false
+          privileged: false
+          runAsUser: 0
+          runAsGroup: 0
+        volumeMounts:
+          - mountPath: /build/plugins
+            name: headlamp-plugins
+    
+    # Volume configuration for plugin persistence
+    persistentVolumeClaim:
+      accessModes:
+        - ReadWriteOnce
       enabled: true
-      flux:
-        enabled: true
-        # Configuration for Flux plugin
-        # You can add specific Flux plugin configuration here if needed
+      size: 1Gi
+    
+    volumeMounts:
+      - mountPath: /build/plugins
+        name: headlamp-plugins
+    
+    volumes:
+      - name: headlamp-plugins
+        persistentVolumeClaim:
+          claimName: headlamp
     
     # Resource limits (optional)
     resources:
@@ -44,7 +74,7 @@ spec:
         cpu: "500m"
         memory: "512Mi"
     
-    # Ingress configuration will be handled separately
+    # Disable built-in ingress as we handle it separately
     ingress:
       enabled: false
 
