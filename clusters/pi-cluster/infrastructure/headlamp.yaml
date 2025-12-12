@@ -6,6 +6,38 @@ kind: Namespace
 metadata:
   name: headlamp
 ---
+# Service Account for Headlamp authentication
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: headlamp-admin
+  namespace: headlamp
+---
+# ClusterRoleBinding to grant admin access to Headlamp ServiceAccount
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: headlamp-admin
+subjects:
+- kind: ServiceAccount
+  name: headlamp-admin
+  namespace: headlamp
+roleRef:
+  kind: ClusterRole
+  name: cluster-admin
+  apiGroup: rbac.authorization.k8s.io
+---
+# Secret to store the ServiceAccount token (will be auto-populated by Kubernetes)
+# This allows Headlamp to automatically use the token without manual intervention
+apiVersion: v1
+kind: Secret
+metadata:
+  name: headlamp-admin-token
+  namespace: headlamp
+  annotations:
+    kubernetes.io/service-account.name: headlamp-admin
+type: kubernetes.io/service-account-token
+---
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
@@ -30,6 +62,12 @@ spec:
     # Flux plugin configuration using initContainer approach
     config:
       pluginsDir: /build/plugins
+      # Configure Headlamp to use ServiceAccount token authentication
+      # This allows automatic token-based authentication without manual kubectl commands
+      enableDynamicPlugins: true
+      clusterName: "pi-cluster"
+      # Enable in-cluster config for automatic service account token mounting
+      inCluster: true
     
     # Init container to install Flux plugin
     initContainers:
@@ -64,6 +102,11 @@ spec:
       - name: headlamp-plugins
         persistentVolumeClaim:
           claimName: headlamp
+      # Mount the ServiceAccount token for automatic authentication
+      - name: headlamp-token
+        secret:
+          secretName: headlamp-admin-token
+          optional: false
     
     # Resource limits (optional)
     resources:
