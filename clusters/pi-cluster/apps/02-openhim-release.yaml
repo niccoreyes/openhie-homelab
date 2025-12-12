@@ -1,3 +1,60 @@
+## stock configuration that works for on raw docker
+
+# pi@raspberrypi:~/openhim-common $ cat docker-compose.yml
+# services:
+#   mongo:
+#     container_name: openhim-mongo
+#     ports:
+#       - "27017:27017"
+#     image: mongo:3.4
+
+#   core:
+#     container_name: openhim-core
+#     image: jembi/openhim-core
+#     environment:
+#       - mongo_url=mongodb://mongo/openhim
+#       - mongo_atnaUrl=mongodb://mongo/openhim
+#     ports:
+#       - "8080:8080"
+#       - "5000:5000"
+#       - "5001:5001"
+#       - "5050:5050"
+#       - "5051:5051"
+#       - "5052:5052"
+#       - "7788:7788"
+#     depends_on:
+#       - mongo
+
+#   console:
+#     container_name: openhim-console
+#     image: jembi/openhim-console
+#     ports:
+#         - "9000:80"
+#     volumes:
+#       - ./default.json:/usr/share/nginx/html/config/default.json
+
+# pi@raspberrypi:~/openhim-common $ cat default.json
+# {
+#   "version": "1.18.2",
+#   "minimumCoreVersion": "5.2.0",
+#   "protocol": "https",
+#   "host": "localhost",
+#   "hostPath": "",
+#   "port": "8080",
+#   "title": "Admin Console",
+#   "footerTitle": "OpenHIM Administration Console",
+#   "footerPoweredBy": "<a href='http://openhim.org/' target='_blank'>Powered by OpenHIM</a>",
+#   "loginBanner": "",
+#   "mediatorLastHeartbeatWarningSeconds": 60,
+#   "mediatorLastHeartbeatDangerSeconds": 120,
+#   "showLoginForm": true,
+#   "ssoEnabled": false,
+#   "keyCloakUrl": "http://localhost:9088",
+#   "keyCloakRealm": "platform-realm",
+#   "keyCloakClientId": "openhim-oauth"
+# }
+
+
 # OpenHIM Namespace
 apiVersion: v1
 kind: Namespace
@@ -55,8 +112,8 @@ data:
       "version": "1.10.0",
       "minimumCoreVersion": "3.4.0",
       "protocol": "https",
-      "host": "localhost",
-      "port": 8080,
+      "host": "openhim-core.tail126a09.ts.net",
+      "port": 433,
       "title": "Admin Console",
       "footerTitle": "OpenHIM Administration Console",
       "footerPoweredBy": "<a href='http://openhim.org/' target='_blank'>Powered by OpenHIM</a>",
@@ -186,32 +243,32 @@ spec:
     - protocol: TCP
       port: 9000
       targetPort: 9000
-# ---
-# # OpenHIM Core Ingress
-# apiVersion: networking.k8s.io/v1
-# kind: Ingress
-# metadata:
-#   name: openhim-core-ingress
-#   namespace: openhim
-#   labels:
-#     app.kubernetes.io/name: openhim-core
-#     app.kubernetes.io/component: ingress
-# spec:
-#   ingressClassName: tailscale
-#   tls:
-#   - hosts:
-#       - openhim
-#   rules:
-#     - host: openhim
-#       http:
-#         paths:
-#           - path: /
-#             pathType: Prefix
-#             backend:
-#               service:
-#                 name: openhim-core
-#                 port:
-#                   number: 8080
+---
+# OpenHIM Core Ingress
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: openhim-core-ingress
+  namespace: openhim
+  labels:
+    app.kubernetes.io/name: openhim-core
+    app.kubernetes.io/component: ingress
+spec:
+  ingressClassName: tailscale
+  tls:
+  - hosts:
+      - openhim
+  rules:
+    - host: openhim
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: openhim-core
+                port:
+                  number: 8080
 ---
 # OpenHIM Console Ingress
 apiVersion: networking.k8s.io/v1
