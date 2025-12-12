@@ -97,6 +97,10 @@ spec:
     volumeMounts:
       - mountPath: /build/plugins
         name: headlamp-plugins
+      # Mount the ServiceAccount token for Headlamp to use
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: headlamp-token
+        readOnly: true
     
     volumes:
       - name: headlamp-plugins

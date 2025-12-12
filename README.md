@@ -174,9 +174,6 @@ openhie-homelab/
 │   ├── specs/                 # Current specifications
 │   └── changes/               # Proposed changes
 ├── AGENTS.md                  # AI assistant instructions
-├── CLAUDE.md                  # Claude-specific instructions
-├── GEMINI.md                  # Gemini-specific instructions
-├── QWEN.md                    # Qwen-specific instructions
 └── README.md                  # This file
 ```
 
