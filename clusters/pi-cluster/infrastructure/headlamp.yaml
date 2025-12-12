@@ -121,11 +121,20 @@ metadata:
   labels:
     app.kubernetes.io/name: headlamp
     app.kubernetes.io/component: ingress
+  annotations:
+    # Enable Tailscale's automatic certificate management
+    tailscale.com/cert: "true"
+    # Use the Tailscale MagicDNS domain for the certificate
+    tailscale.com/cert-domain: "headlamp"
+    # Enable HTTPS (Tailscale will handle the certificate automatically)
+    tailscale.com/https: "true"
 spec:
   ingressClassName: tailscale
   tls:
   - hosts:
       - headlamp
+    # Tailscale will automatically provide the certificate for this host
+    # No need to specify a secretName as Tailscale handles it
   rules:
     - host: headlamp
       http:
