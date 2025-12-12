@@ -3,7 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: openhim-mongo
-  namespace: default
+  namespace: openhim
 spec:
   selector:
     matchLabels:
@@ -28,7 +28,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: openhim-mongo
-  namespace: default
+  namespace: openhim
 spec:
   selector:
     app: openhim-mongo
@@ -42,7 +42,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: openhim-console-config
-  namespace: default
+  namespace: openhim
 data:
   default.json: |
     {
@@ -64,7 +64,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: openhim-core
-  namespace: default
+  namespace: openhim
 spec:
   selector:
     matchLabels:
@@ -100,7 +100,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: openhim-core
-  namespace: default
+  namespace: openhim
 spec:
   selector:
     app: openhim-core
@@ -139,7 +139,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: openhim-console
-  namespace: default
+  namespace: openhim
 spec:
   selector:
     matchLabels:
@@ -172,7 +172,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: openhim-console
-  namespace: default
+  namespace: openhim
 spec:
   selector:
     app: openhim-console
@@ -186,7 +186,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: openhim-core-ingress
-  namespace: default
+  namespace: openhim
   labels:
     app.kubernetes.io/name: openhim-core
     app.kubernetes.io/component: ingress
@@ -211,24 +211,24 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: openhim-console-ingress
-  namespace: default
+  name: openhim-ingress
+  namespace: openhim
   labels:
-    app.kubernetes.io/name: openhim-console
+    app.kubernetes.io/name: openhim
     app.kubernetes.io/component: ingress
 spec:
   ingressClassName: tailscale
   tls:
   - hosts:
-      - openhim-console
+      - openhim
   rules:
-    - host: openhim-console
+    - host: openhim
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: openhim-console
+                name: openhim
                 port:
                   number: 9000
