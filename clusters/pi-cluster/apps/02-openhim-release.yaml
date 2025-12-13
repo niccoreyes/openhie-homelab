@@ -369,4 +369,4 @@ spec:
               service:
                 name: openhim-core
                 port:
-                  number: 5000
+                  number: 8080
