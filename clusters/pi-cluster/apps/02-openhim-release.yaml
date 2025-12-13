@@ -293,7 +293,7 @@ data:
       "version": "1.10.3",
       "minimumCoreVersion": "5.2.0",
       "protocol": "https",
-      "host": "openhim.tail126a09.ts.net",
+      "host": "openhim.local",
       "port": "",
       "title": "Admin Console",
       "footerTitle": "OpenHIM Administration Console",
@@ -354,13 +354,18 @@ metadata:
   labels:
     app.kubernetes.io/name: openhim-core
     app.kubernetes.io/component: ingress
+  annotations:
+    # Traefik-specific annotations for TLS (if using Let's Encrypt)
+    # traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    # traefik.ingress.kubernetes.io/router.tls: "true"
+    # cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
-  ingressClassName: tailscale
+  ingressClassName: traefik
   tls:
   - hosts:
-      - openhim
+      - openhim.raspberrypi.tail126a09.ts.net
   rules:
-    - host: openhim
+    - host: openhim.raspberrypi.tail126a09.ts.net
       http:
         paths:
           - path: /
