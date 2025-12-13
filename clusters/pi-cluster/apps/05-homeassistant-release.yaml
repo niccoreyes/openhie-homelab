@@ -36,6 +36,7 @@ spec:
     service:
       type: ClusterIP
       port: 8123
+      name: homeassistant
       annotations: {}
 
     # Ingress settings
@@ -178,6 +179,8 @@ metadata:
   labels:
     app.kubernetes.io/name: homeassistant
     app.kubernetes.io/component: ingress
+  annotations:
+    tailscale.com/expose: "true"
 spec:
   ingressClassName: tailscale
   tls:
