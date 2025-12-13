@@ -35,7 +35,7 @@ spec:
     # Service settings
     service:
       type: ClusterIP
-      port: 8080
+      port: 8123
       annotations: {}
 
     # Ingress settings
@@ -191,6 +191,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: hapi-fhir-jpaserver
+                name: homeassistant
                 port:
-                  number: 8080
+                  number: 8123
