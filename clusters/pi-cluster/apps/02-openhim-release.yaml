@@ -202,37 +202,37 @@ spec:
       protocol: TCP
       port: 8080
       targetPort: 8080
-      nodePort: 8080
+      nodePort: 30080
     - name: https-5000
       protocol: TCP
       port: 5000
       targetPort: 5000
-      nodePort: 5000
+      nodePort: 30500
     - name: https-5001
       protocol: TCP
       port: 5001
       targetPort: 5001
-      nodePort: 5001
+      nodePort: 30501
     - name: https-5050
       protocol: TCP
       port: 5050
       targetPort: 5050
-      nodePort: 5050
+      nodePort: 30550
     - name: https-5051
       protocol: TCP
       port: 5051
       targetPort: 5051
-      nodePort: 5051
+      nodePort: 30551
     - name: https-5052
       protocol: TCP
       port: 5052
       targetPort: 5052
-      nodePort: 5052
+      nodePort: 30552
     - name: https-7788
       protocol: TCP
       port: 7788
       targetPort: 7788
-      nodePort: 7788
+      nodePort: 30778
 ---
 #####
 # CONSOLE
