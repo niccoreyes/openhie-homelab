@@ -192,4 +192,5 @@ spec:
             backend:
               service:
                 name: hapi-fhir-jpaserver
-                port: 8080
+                port:
+                  number: 8080
