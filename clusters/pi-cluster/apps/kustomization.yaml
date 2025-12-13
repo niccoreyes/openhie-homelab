@@ -5,3 +5,4 @@ resources:
   - 02-openhim-release.yaml
   # - 03-ocl-release.yaml
   - 04-n8n-release.yaml
+  - 05-homeassistant-release.yaml

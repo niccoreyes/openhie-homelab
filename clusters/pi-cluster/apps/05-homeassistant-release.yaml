@@ -1,0 +1,195 @@
+# OpenHIM Namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: homeassistant
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: homeassistant
+  namespace: homeassistant
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: homeassistant
+      version: "*"
+      sourceRef:
+        kind: HelmRepository
+        name: homeassistant
+        namespace: homeassistant
+  values:
+    # Image settings
+    image:
+      repository: ghcr.io/home-assistant/home-assistant
+      pullPolicy: IfNotPresent
+      tag: ""
+
+    # Service account settings
+    # serviceAccount:
+    #   create: true
+    #   annotations: {}
+    #   name: ""
+
+    # Service settings
+    service:
+      type: ClusterIP
+      port: 8080
+      annotations: {}
+
+    # Ingress settings
+    # ingress:
+    #   enabled: false
+    #   external: false
+    #   className: ""
+    #   labels: {}
+    #   annotations: {}
+    #   hosts:
+    #     - host: chart-example.local
+    #       paths:
+    #         - path: /
+    #           pathType: ImplementationSpecific
+    #   tls: []
+
+    # # Configuration for Home Assistant
+    # configuration:
+    #   enabled: false
+    #   forceInit: false
+    #   trusted_proxies:
+    #     - 10.0.0.0/8
+    #     - 172.16.0.0/12
+    #     - 192.168.0.0/16
+    #     - 127.0.0.0/8
+
+    # Persistence values
+    persistence:
+      enabled: false
+      accessMode: ReadWriteOnce
+      size: 5Gi
+      storageClass: ""
+      existingVolume: ""
+      existingClaim: ""
+      annotations: {}
+      matchLabels: {}
+      matchExpressions: {}
+
+    # # Resource settings
+    # resources: {}
+
+    # # Node selector, tolerations, and affinity
+    # nodeSelector: {}
+    # tolerations: []
+    # affinity: {}
+
+    # # Security settings
+    # podSecurityContext: {}
+    # securityContext: {}
+
+    # Network settings
+    hostNetwork: false
+    hostPort:
+      enabled: false
+      port: 8123
+
+    # Health probes
+    livenessProbe:
+      failureThreshold: 3
+      httpGet:
+        path: /
+        port: http
+        scheme: HTTP
+      periodSeconds: 20
+      successThreshold: 1
+      timeoutSeconds: 2
+
+    readinessProbe:
+      failureThreshold: 3
+      httpGet:
+        path: /
+        port: http
+        scheme: HTTP
+      periodSeconds: 10
+      successThreshold: 1
+      timeoutSeconds: 1
+
+    startupProbe: {}
+
+    # Controller configuration
+    controller:
+      type: StatefulSet
+
+    # Additional settings
+    # priorityClassName: ""
+    # additionalVolumes: []
+    # additionalMounts: []
+    # additionalPorts: []
+    # additionalServices: []
+    # initContainers: []
+    # env: []
+    # envFrom: []
+    # dnsConfig: {}
+    # serviceMonitor:
+    #   enabled: false
+    #   scrapeInterval: 30s
+    #   labels: {}
+    #   bearerToken: {}
+
+    # Addons configuration
+    addons:
+      codeserver:
+        enabled: false
+        resources: {}
+        image:
+          repository: ghcr.io/coder/code-server
+          pullPolicy: IfNotPresent
+          tag: "4.105.1"
+        auth:
+          enabled: false
+          existingSecret: ""
+          password: ""
+        service:
+          type: ClusterIP
+          port: 12321
+        ingress:
+          enabled: false
+          className: ""
+          annotations: {}
+          hosts:
+            - host: chart-example.local
+              paths:
+                - path: /
+                  pathType: ImplementationSpecific
+          tls: []
+        additionalMounts: []
+
+    # Annotations
+    # podAnnotations: {}
+    # statefulSetAnnotations: {}
+    # deploymentAnnotations: {}
+    deploymentStrategy: RollingUpdate
+    
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: homeassistant-ingress
+  namespace: homeassistant
+  labels:
+    app.kubernetes.io/name: homeassistant
+    app.kubernetes.io/component: ingress
+spec:
+  ingressClassName: tailscale
+  tls:
+  - hosts:
+      - homeassistant
+  rules:
+    - host: homeassistant
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: hapi-fhir-jpaserver
+                port: 8080

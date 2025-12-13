@@ -3,3 +3,4 @@ kind: Kustomization
 resources:
   - helm-repositories.yaml
   - hapi-fhir-source.yaml
+  - homeassistant.yaml
